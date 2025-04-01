@@ -3,11 +3,10 @@
     
 
     
-    <p>Helllooo</p>
+    <p>Contact</p>
   </div>
 </template>
 
 <script>
 
 </script>
-
