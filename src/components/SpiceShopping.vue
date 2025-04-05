@@ -1,7 +1,7 @@
 <template>
   <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
-      <h2 class="text-3xl font-bold text-center">Spices</h2>
+      <h2 class="text-3xl font-bold text-center">Featured Spices</h2>
       <p class="text-center max-w-xl font-sans text-gray-500 mt-2 mx-auto">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque duis ultrices sollicitudin aliquam sem. Scelerisque duis ultrices sollicitudin.
       </p>
@@ -86,8 +86,8 @@ import spiceTwelve from '@/assets/img/spiceTwelve.png';
 export default {
   data() {
     return {
-      selectedCategory: "All",
-      categories: ["All", "Berbere", "Shiro", "Tiratire", "Special Spices", "Nechshinkurt", "Kundo Berbere"],
+      selectedCategory: "Berbere",
+      categories: [ "Berbere", "Shiro", "Tiratire", "Special Spices", "Nechshinkurt", "Kundo Berbere"],
       spices: [
         { id: 1, name: "Berbere", price: 95.5, category: "Berbere", image: spiceOne, rating: 5 },
         { id: 2, name: "Shiro", price: 80.0, category: "Shiro", image: spiceTwo, rating: 5 },

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import logo from '@/assets/img/spicylogo.png';
-import cart from '@/assets/img/cart.png';
+
 import { RouterLink, useRoute } from 'vue-router';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 
@@ -31,7 +31,7 @@ const defaultStyle = "text-decoration: none; color: white;";
       </div>
 
       
-      <div style="display: flex; gap: 20px;">
+      <div style="display: flex; gap: 60px; font-family: sans-serif;">
         <RouterLink to="/" :style="route.path === '/' ? activeStyle : defaultStyle">
           Home
         </RouterLink>
