@@ -1,15 +1,33 @@
 <script setup lang="ts">
 import logo from '@/assets/img/spicylogo.png';
+import { RouterLink, useRoute, useRouter } from 'vue-router';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-import { RouterLink, useRoute } from 'vue-router';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+const route = useRoute();
+const router = useRouter();
 
-
-const route = useRoute(); // Get the current route
-
-// Define styles for active and default links
 const activeStyle = "font-weight: bold; text-decoration: underline; color: white;";
 const defaultStyle = "text-decoration: none; color: white;";
+
+
+const cartCount = ref(0);
+
+const updateCartCount = () => {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cartCount.value = cart.reduce((total: number, item: any) => total + item.quantity, 0); // ← this is key
+};
+
+
+onMounted(() => {
+  updateCartCount();
+  window.addEventListener('storage', updateCartCount);
+  window.addEventListener('cart-updated', updateCartCount); // Custom event
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('storage', updateCartCount);
+  window.removeEventListener('cart-updated', updateCartCount);
+});
 </script>
 
 <template>
@@ -20,17 +38,13 @@ const defaultStyle = "text-decoration: none; color: white;";
         align-items: center;
         justify-content: space-between;
         background: #111;
-        padding: 10px 20px;
-        padding-right: 60px;
-        padding-left: 60px;
+        padding: 10px 60px;
       "
     >
-     
       <div>
         <img :src="logo" alt="Logo" style="height: 40px;" />
       </div>
 
-      
       <div style="display: flex; gap: 60px; font-family: sans-serif;">
         <RouterLink to="/" :style="route.path === '/' ? activeStyle : defaultStyle">
           Home
@@ -47,12 +61,11 @@ const defaultStyle = "text-decoration: none; color: white;";
         <RouterLink to="/recipes" :style="route.path === '/recipes' ? activeStyle : defaultStyle">
           Recipes
         </RouterLink>
-        
       </div>
 
-      
       <div>
-        <button
+        <RouterLink
+          to="/cart"
           style="
             background: white;
             color: #333;
@@ -60,12 +73,12 @@ const defaultStyle = "text-decoration: none; color: white;";
             padding: 8px 32px;
             cursor: pointer;
             border-radius: 25px;
+            text-decoration: none;
           "
         >
-        <i class="fas fa-shopping-cart"></i>
-          Cart
-
-        </button>
+          <i class="fas fa-shopping-cart"></i>
+          Cart ({{ cartCount }})
+        </RouterLink>
       </div>
     </nav>
 
