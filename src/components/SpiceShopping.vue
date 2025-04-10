@@ -3,12 +3,10 @@
     <div class="container mx-auto px-4">
       <h2 class="text-3xl font-bold text-center">Featured Spices</h2>
       <p class="text-center max-w-xl font-sans text-gray-500 mt-2 mx-auto">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque
-        duis ultrices sollicitudin aliquam sem. Scelerisque duis ultrices
-        sollicitudin.
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit...
       </p>
 
-      <!-- Categories' tab -->
+      <!-- Categories -->
       <div
         class="flex justify-center font-sans mt-6 space-x-6 sm:space-x-12 flex-wrap"
       >
@@ -27,59 +25,63 @@
         </button>
       </div>
 
-      <!-- Spices' Grid -->
+      <!-- Spices Grid -->
       <div
         class="grid grid-cols-1 font-sans sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mt-10"
       >
         <div
           v-for="spice in filteredSpices"
           :key="spice.id"
-          class="bg-white p-6 shadow-lg rounded-lg overflow-hidden flex flex-col"
+          class="bg-white p-6 shadow-lg rounded-lg overflow-hidden flex flex-col transition-transform hover:scale-105 duration-200"
         >
-          <img
-            :src="spice.image"
-            :alt="spice.name"
-            class="w-full h-48 object-cover rounded-lg"
-          />
-          <div
-            class="p-4 flex flex-col sm:flex-row justify-between items-center sm:items-start mt-4"
+          <!-- Only the image links to detail -->
+          <RouterLink
+            :to="{ name: 'SpiceDetail', params: { id: spice.id } }"
+            class="block"
           >
-            <!-- Left Side: Name and Price -->
-            <div class="sm:w-2/3">
-              <h3 class="text-lg font-semibold">{{ spice.name }}</h3>
-              <p class="text-gray-500 text-sm">Spice</p>
-              <p class="text-3xl font-semibold mt-4">${{ spice.price }}</p>
-            </div>
+            <img
+              :src="spice.image"
+              :alt="spice.name"
+              class="w-full h-48 object-cover rounded-lg"
+            />
 
-            <!-- Right Side: Stars and Cart Button -->
-            <div class="flex flex-col items-end sm:w-1/3 sm:mt-0 mt-4">
-              <!-- Stars -->
-              <div class="flex mb-2">
-                <i
-                  v-for="n in spice.rating"
-                  :key="n"
-                  class="fas fa-star text-black"
-                ></i>
-                <i
-                  v-for="n in 5 - spice.rating"
-                  :key="5 - n"
-                  class="fas fa-star text-gray-300"
-                ></i>
+            <div
+              class="p-4 flex flex-col sm:flex-row justify-between items-center sm:items-start mt-4"
+            >
+              <div class="sm:w-2/3">
+                <h3 class="text-lg font-semibold">{{ spice.name }}</h3>
+                <p class="text-gray-500 text-sm">Spice</p>
+                <p class="text-3xl font-semibold mt-4">${{ spice.price }}</p>
               </div>
 
-              <!-- Cart Button -->
-              <button
-                class="mt-4 sm:mt-12 bg-black text-white px-4 py-2 cursor-pointer rounded-full flex justify-center items-center gap-2"
-              >
-                Add <i class="fas fa-shopping-cart"></i>
-              </button>
+              <div class="flex flex-col items-end sm:w-1/3 sm:mt-0 mt-4">
+                <div class="flex mb-2">
+                  <i
+                    v-for="n in spice.rating"
+                    :key="n"
+                    class="fas fa-star text-black"
+                  ></i>
+                  <i
+                    v-for="n in 5 - spice.rating"
+                    :key="5 - n"
+                    class="fas fa-star text-gray-300"
+                  ></i>
+                </div>
+                <button
+                  @click="addToCart(spice)"
+                  class="mt-4 sm:mt-12 bg-black text-white px-4 py-2 cursor-pointer rounded-full flex justify-center items-center gap-2"
+                >
+                  Add <i class="fas fa-shopping-cart"></i>
+                </button>
+              </div>
             </div>
-          </div>
+          </RouterLink>
         </div>
       </div>
-      <!-- wishlist Button -->
+
+      <!-- Wishlist -->
       <button
-        class="mt-4 sm:mt-12 font-sans bg-black text-white px-4 py-2 rounded-full flex justify-center items-center cursor-pointer mx-auto gap-2"
+        class="mt-12 font-sans bg-black text-white px-4 py-2 rounded-full flex justify-center items-center cursor-pointer mx-auto gap-2"
       >
         Wishlist
       </button>
@@ -87,7 +89,8 @@
   </section>
 </template>
 
-<script scoped>
+<script lang="ts" scoped>
+import { RouterLink } from "vue-router";
 import spiceOne from "@/assets/img/spiceOne.png";
 import spiceTwo from "@/assets/img/spiceTwo.png";
 import spiceThree from "@/assets/img/spiceThree.png";
@@ -100,6 +103,15 @@ import spiceNine from "@/assets/img/spiceNine.png";
 import spiceTen from "@/assets/img/spiceTen.png";
 import spiceEleven from "@/assets/img/spiceEleven.png";
 import spiceTwelve from "@/assets/img/spiceTwelve.png";
+
+interface Spice {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  image: string;
+  rating: number;
+}
 
 export default {
   data() {
@@ -214,13 +226,30 @@ export default {
     };
   },
   computed: {
-    filteredSpices() {
+    filteredSpices(): Spice[] {
       return this.selectedCategory === "All"
         ? this.spices
-        : this.spices.filter((s) => s.category === this.selectedCategory);
+        : this.spices.filter(
+            (s: Spice) => s.category === this.selectedCategory
+          );
+    },
+  },
+  methods: {
+    addToCart(spice: Spice) {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+
+      const existing = cart.find((item: any) => item.id === spice.id);
+
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ ...spice, quantity: 1 });
+      }
+
+      localStorage.setItem("cart", JSON.stringify(cart));
+      window.dispatchEvent(new Event("cart-updated"));
+      alert(`${spice.name} added to cart!`);
     },
   },
 };
 </script>
-
-<style scoped></style>

@@ -39,46 +39,43 @@
         </div>
 
         <!-- Spices' Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-0 sm:px-4 md:px-16 lg:px-4 mt-2">
-          <div
-            v-for="spice in filteredSpices"
-            :key="spice.id"
-            class="bg-white p-4 sm:p-6 shadow-lg rounded-lg overflow-hidden flex flex-col"
+        <div class="grid grid-cols-1 font-sans sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mt-10">
+        <div
+          v-for="spice in filteredSpices"
+          :key="spice.id"
+          class="bg-white p-6 shadow-lg rounded-lg overflow-hidden flex flex-col transition-transform hover:scale-105 duration-200"
+        >
+          
+          <RouterLink
+            :to="{ name: 'SpiceDetail', params: { id: spice.id } }"
+            class="block"
           >
             <img :src="spice.image" :alt="spice.name" class="w-full h-48 object-cover rounded-lg" />
-            <div class="p-4 flex flex-col sm:flex-row justify-between items-center sm:items-start mt-4 space-y-4 sm:space-y-0">
-              
-              <!-- Left Side: Name and Price -->
-              <div class="sm:w-2/3 text-center sm:text-left">
-                <h3 class="text-lg font-semibold">{{ spice.name }}</h3>
-                <p class="text-gray-500 text-sm">Spice</p>
-                <p class="text-3xl font-semibold mt-4">${{ spice.price }}</p>
-              </div>
-              
-              <!-- Right Side: Stars and Cart Button -->
-              <div class="flex flex-col items-center sm:items-end sm:w-1/3">
-                <!-- Stars -->
-                <div class="flex mb-2">
-                  <i
-                    v-for="n in spice.rating"
-                    :key="n"
-                    class="fas fa-star text-black"
-                  ></i>
-                  <i
-                    v-for="n in (5 - spice.rating)"
-                    :key="5 - n"
-                    class="fas fa-star text-gray-300"
-                  ></i>
-                </div>
+          
 
-                <!-- Cart Button -->
-                <button class="mt-4 sm:mt-12 bg-black text-white px-4 py-2 cursor-pointer rounded-full flex justify-center items-center gap-2">
-                  Add <i class="fas fa-shopping-cart"></i>
-                </button>
+          <div class="p-4 flex flex-col sm:flex-row justify-between items-center sm:items-start mt-4">
+            <div class="sm:w-2/3">
+              <h3 class="text-lg font-semibold">{{ spice.name }}</h3>
+              <p class="text-gray-500 text-sm">Spice</p>
+              <p class="text-3xl font-semibold mt-4">${{ spice.price }}</p>
+            </div>
+
+            <div class="flex flex-col items-end sm:w-1/3 sm:mt-0 mt-4">
+              <div class="flex mb-2">
+                <i v-for="n in spice.rating" :key="n" class="fas fa-star text-black"></i>
+                <i v-for="n in (5 - spice.rating)" :key="5 - n" class="fas fa-star text-gray-300"></i>
               </div>
+              <button
+                @click="addToCart(spice)"
+                class="mt-4 sm:mt-12 bg-black text-white px-4 py-2 cursor-pointer rounded-full flex justify-center items-center gap-2"
+              >
+                Add <i class="fas fa-shopping-cart"></i>
+              </button>
             </div>
           </div>
+          </RouterLink>
         </div>
+      </div>
 
         <!-- Wishlist Button -->
         <div class="flex justify-center mt-8">
@@ -91,7 +88,7 @@
   </div>
 </template>
 
-<script scoped>
+<script lang="ts" scoped>
 import spiceOne from '@/assets/img/spiceOne.png';
 import spiceTwo from '@/assets/img/spiceTwo.png';
 import spiceThree from '@/assets/img/spiceThree.png';
@@ -105,6 +102,15 @@ import spiceTen from '@/assets/img/spiceTen.png';
 import spiceEleven from '@/assets/img/spiceEleven.png';
 import spiceTwelve from '@/assets/img/spiceTwelve.png';
 import banner from '@/assets/img/banner.png';
+
+interface Spice {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+  image: string;
+  rating: number;
+}
 
 export default {
   data() {
@@ -129,15 +135,34 @@ export default {
     };
   },
   computed: {
-    filteredSpices() {
+    filteredSpices(): Spice[] {
       return this.selectedCategory === "All"
         ? this.spices
         : this.spices.filter(s => s.category === this.selectedCategory);
     },
   },
+  methods: {
+    addToCart(spice: Spice) {
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+
+  const existing = cart.find((item: any) => item.id === spice.id);
+
+  if (existing) {
+    existing.quantity += 1;
+  } else {
+    cart.push({ ...spice, quantity: 1 });
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  window.dispatchEvent(new Event('cart-updated'));
+  alert(`${spice.name} added to cart!`);
+}
+
+
+  }
 };
 </script>
 
 <style scoped>
-/* Add custom styles if needed */
+
 </style>
