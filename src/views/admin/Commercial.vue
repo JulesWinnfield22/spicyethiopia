@@ -1,35 +1,30 @@
 <template>
-  <div class="overflow-x-hidden">
-    <section class="bg-black text-white py-16 text-center">
-      <div class="container mx-auto px-8">
-        <h1 class="text-6xl font-semibold leading-tight font-serif">
-          Authentic Ethiopian Spices<br />Delivered to Your Door.
-        </h1>
-        <p class="mt-4 font-sans max-w-3xl mx-auto text-lg">
-          Enhance your culinary creations with our authentic Ethiopian spices,
-          now available for easy online ordering and home delivery. Savor the
-          rich, bold flavors of Ethiopia with our premium, organic selections.
-          From Berbere to Mitmita, we bring you the essence of Ethiopian
-          cuisine—sourced directly, bursting with flavor, and delivered swiftly
-          across Canada.
-        </p>
-        <div class="mt-8 flex justify-center gap-6">
-          <button
-            class="bg-white text-black font-sans px-6 py-3 cursor-pointer rounded-full font-semibold flex items-center gap-2 transition duration-300 hover:bg-gray-100"
-          >
-            Featured Spices <span><i class="fa-solid fa-arrow-right"></i></span>
-          </button>
-          <button
-            class="border border-white font-sans px-6 py-3 cursor-pointer rounded-full font-semibold flex items-center gap-2 transition duration-300 hover:bg-gray-800"
-          >
-            Explore Ethiopian Recipes
-            <span><i class="fa-solid fa-arrow-right"></i></span>
-          </button>
-        </div>
+  <div class="p-6 space-y-8 font-sans">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <h1 class="text-lg font-medium text-gray-800">Commercial</h1>
       </div>
+    </div>
+    
+    <!-- Editing Sections -->
+    <section>
+        
+        <div class="container mx-auto px-4 relative flex flex-col items-center"> 
+         
+        <div class="w-full h-[300px] sm:h-[400px] md:h-[480px] flex justify-center mb-6 md:mb-0">
+            <img :src="banner" alt="Shop Banner" class="w-full h-full object-cover" />
+         </div>    
+         <div class="flex w-full -mt-14 backdrop-blur-3xl items-center  justify-end p-2">
+            <div class="flex gap-2">
+                <button class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium">
+                    Change
+                </button>
+            </div>
+         </div>
+        </div>
     </section>
 
-    <section class="bg-white py-16">
+    <section class="">
       <div class="container mx-auto px-4 relative flex flex-col items-center">
         <div
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full"
@@ -76,53 +71,18 @@
             />
           </div>
         </div>
-      </div>
-    </section>
-    <section class="bg-gray-100 py-10">
-      <div
-        class="container mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
-      >
-        <div class="flex items-center gap-2 space-x-4">
-          <i class="fa-solid fa-ranking-star fa-3x"></i>
-          <div>
-            <h3 class="text-lg font-sans font-semibold">High Quality</h3>
-            <p class="text-gray-500 font-sans text-sm">
-              Crafted from top materials
-            </p>
-          </div>
-        </div>
-
-        <div class="flex items-center font-sans space-x-4">
-          <i class="fa-solid fa-award fa-3x"></i>
-          <div>
-            <h3 class="text-lg font-sans font-semibold">Warranty Protection</h3>
-            <p class="text-gray-500 font-sans text-sm">Over 2 years</p>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-4">
-          <i class="fa-solid fa-box fa-3x"></i>
-          <div>
-            <h3 class="text-lg font-sans font-semibold">Free Shipping</h3>
-            <p class="text-gray-500 font-sans text-sm">Order over 150$</p>
-          </div>
-        </div>
-
-        <div class="flex items-center space-x-4">
-          <i class="fa-solid fa-phone-volume fa-3x"></i>
-          <div>
-            <h3 class="text-lg font-sans font-semibold">24/7 Support</h3>
-            <p class="text-gray-500 font-sans text-sm">Dedicated support</p>
-          </div>
+        <div class="flex w-full -mt-14 items-center backdrop-blur-2xl justify-end p-2">
+            <div class="flex gap-2">
+                 <button
+                     class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium"
+                    >Change
+                 </button>
+            </div>
         </div>
       </div>
     </section>
-    <div>
-      <SpiceShopping />
-    </div>
-    <div><SpiceCarousel /></div>
-    <div>
-      <section
+
+    <section
         class="bg-black text-white py-12 px-6 md:px-12 flex flex-col md:flex-row items-center"
       >
         <div class="md:w-1/2 space-y-4 px-8">
@@ -166,18 +126,33 @@
             Learn More
           </button>
         </div>
-        <div class="md:w-1/2 h-[560px] flex justify-center mt-6 md:mt-0">
+        <div class="container mx-auto px-4 relative flex flex-col items-end">
+         
+            <div class="md:w-1/2 h-[560px] flex mt-6 md:mt-0">
           <img
             :src="berbereImage"
             alt="Berbere Spice"
             class="rounded-lg shadow-lg w-full md:w-auto"
           />
         </div>
+         <div class="flex w-1/2 -mt-14 items-center backdrop-blur-2xl justify-end p-2">
+            <div class="flex gap-2">
+                 <button
+                     class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium"
+                    >Change
+                 </button>
+            </div>
+         </div>
+        </div>
+        
       </section>
 
       <section
         class="bg-white text-black py-12 px-6 md:px-12 flex flex-col md:flex-row items-center"
       >
+
+      <div class="container mx-auto px-4 relative flex flex-col items-start">
+
         <div class="md:w-1/2 h-[560px] flex justify-center mb-6 md:mb-0">
           <img
             :src="flag"
@@ -185,6 +160,16 @@
             class="rounded-lg shadow-lg w-full md:w-auto"
           />
         </div>
+        <div class="flex w-1/2 -mt-14 items-center backdrop-blur-2xl justify-end p-2">
+            <div class="flex gap-2">
+                 <button
+                     class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium"
+                    >Change
+                 </button>
+            </div>
+         </div>
+      </div>
+        
         <div class="md:w-1/2 space-y-4 px-12">
           <a href="#" class="text-lg underline">Learn About Ethiopia</a>
           <h2 class="text-5xl font-bold">
@@ -239,72 +224,31 @@
           </div>
         </div>
       </section>
-    </div>
-    <div><Footer /></div>
+    
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import banner from '@/assets/img/banner.png';
 import spices1 from "@/assets/img/spiceSpoonRight.png";
 import spices2 from "@/assets/img/spiceSpoonLeft.png";
 import spices3 from "@/assets/img/coffee.png";
 import spices4 from "@/assets/img/spiceSpoonBottom.png";
-import qualityIcon from "@/assets/img/quality.png";
-import warrantyIcon from "@/assets/img/warranty.png";
-import shippingIcon from "@/assets/img/shipping.png";
-import supportIcon from "@/assets/img/support.png";
-import berbereImage from "@/assets/img/berbereImage.png";
 import flag from "@/assets/img/flagEth.png";
-import SpiceShopping from "@/components/SpiceShopping.vue";
-import SpiceCarousel from "@/components/SpiceCarousel.vue";
-import Footer from "@/components/Footer.vue";
+import berbereImage from "@/assets/img/berbereImage.png";
 
 export default {
-  name: "EthiopianSpices",
-  data() {
-    return {
-      spices1,
-      spices2,
-      spices3,
-      spices4,
-      qualityIcon,
-      warrantyIcon,
-      shippingIcon,
-      supportIcon,
-      berbereImage,
-      flag,
-      steps: [
-        {
-          title: "Sign up for your Capital Guard account.",
-          description:
-            "Initiate your registration either online or through the Paymint app. We'll request certain personal details such as your contact information, nationality, and passport.",
-          expanded: false,
-        },
-        {
-          title: "Enter your transfer details",
-          description:
-            "Provide the necessary banking details and confirm the transaction.",
-          expanded: false,
-        },
-        {
-          title: "Send funds for your transfer",
-          description:
-            "Complete the payment securely through your preferred method.",
-          expanded: false,
-        },
-      ],
-    };
-  },
-  methods: {
-    toggleStep(index) {
-      this.steps[index].expanded = !this.steps[index].expanded;
-    },
-  },
+    data () {
+        return {
+            banner,
+            spices1,
+            spices2,
+            spices3,
+            spices4,
+            flag,
+            berbereImage,
+        }
 
-  components: {
-    SpiceShopping,
-    SpiceCarousel,
-    Footer,
-  },
-};
+    }
+}
 </script>

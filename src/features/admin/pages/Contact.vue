@@ -1,3 +1,8 @@
 <template>
-  <div>Welcome to The Spicy Ethiopian Admin Dashboard!</div>
+  <div class="flex min-h-screen">
+    <div>Sidebar</div>
+    <div>
+      <main>Main content</main>
+    </div>
+  </div>
 </template>

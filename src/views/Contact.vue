@@ -1,103 +1,77 @@
 <template>
-  <div class="flex min-h-screen">
-    <!-- Left Side Image -->
-    <div class="w-2/3 bg-cover bg-center" :style="{ backgroundImage: `url(${login})` }"></div>
-
-    <!-- Right Side Form -->
-    <div class="w-1/3 flex flex-col items-center justify-center px-8">
-      
-      <div class="w-full max-w-md space-y-8">
-
-        <!-- Logo -->
-        <div class="flex justify-center">
-          <img :src="login2" alt="Spice Bottle" class="h-56" />
-        </div>
-
-        <!-- Welcome Text -->
-        <div>
-          <h2 class="text-2xl font-semibold text-gray-900 mb-5">Nice to see you again</h2>
-          <p class="text-sm text-gray-600 font-sans">
-            Oversee your spice inventory and ensure timely follow-ups regarding your Authentic Ethiopian Spices.
-          </p>
-        </div>
-
-        <!-- Login Form -->
-        <form @submit.prevent="handleLogin" class="space-y-4 font-sans">
-          <div>
-            <div>
-              <p class="mb-2 text-[#7E7E7E]">
-                Email
-              </p>
-              <label for="email" class="sr-only">Email or phone number</label>
-            <input id="email" v-model="email" type="text" placeholder="Email or phone number"
-              class="w-full h-[52px] bg-[#F2F2F2] border border-[#E5E5E5] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black" />
-            </div>
-          </div>
-              <p class="mb-2 text-[#7E7E7E]">
-                Password
-              </p>
-          <div class="relative mb-8">
-            <label for="password" class="sr-only">Password</label>
-            <input id="password" v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Enter password"
-              class="w-full h-[52px] bg-[#F2F2F2] border border-[#E5E5E5] rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-black" />
-            <button type="button" @click="togglePassword" class="absolute right-3 top-4 text-[#4D4D4D]">  
-              <i v-if="showPassword" class="fa-solid fa-eye-slash"></i>
-              <i v-else class="fa-solid fa-eye"></i>    
-            </button>
-          </div>
-
-          <!-- Remember Me & Forgot Password -->
-          <div class="flex items-center justify-between text-sm text-gray-600 mb-8">
-            <div class="flex items-center space-x-2">
-              <button @click.prevent="rememberMe = !rememberMe" :class="[
-                'relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 focus:outline-none',
-                rememberMe ? 'bg-black' : 'bg-[#F2F2F2] border-[0.5px] border-[#E5E5E5]'
-              ]">
-                <span :class="[
-                  'inline-block h-4 w-4 transform rounded-full bg-white shadow-md transition-transform duration-200',
-                  rememberMe ? 'translate-x-6' : 'translate-x-1'
-                ]"></span>
-              </button>
-              <span class="text-black">Remember me</span>
-            </div>
-            <a href="#" class="hover:underline text-black">Forgot password?</a>
-          </div>
-
-          <!-- Login Button -->
-          <button type="submit"
-            class="w-full h-[56px] bg-black text-white py-2 rounded-md hover:bg-gray-800 transition duration-200">
-            Login
-          </button>
-        </form>
-
-        <!-- Footer -->
-        <p class="text-center text-sm text-[#666666] mt-28 font-sans">
-          Designed and Developed by <a href="#" class="underline hover:text-black">Encoverse</a>
+    <div class="overflow-x-hidden">
+        <section class="bg-black text-white py-16 text-center">
+      <div class="container mx-auto px-8">
+        <h1 class="text-2xl md:text-7xl font-semibold leading-tight font-serif ">
+          We value your reviews and messages.
+        </h1>
+        <p class="mt-4 font-sans max-w-3xl mx-auto text-base md:text-xl border-t-2 border-white pt-3">
+          Your thoughts help us grow — feel free to reach out <br/> with questions, suggestions, or reviews.
         </p>
+        <div class="mt-8 flex justify-center gap-6">
+          <button
+            class="bg-white text-black font-semibold font-sans px-6 py-3 cursor-pointer rounded-full flex items-center gap-2 transition duration-300 hover:bg-gray-100"
+          >
+            Call us Instead
+          </button>
+          
+        </div>
       </div>
+    </section>
+    <section
+        class="bg-white text-black py-12 px-4 md:px-12 flex flex-col md:flex-row items-center"
+      >
+      <!-- Map Ares -->
+        <div className="w-full md:w-1/2 md:px-6 mt-4 md:mt-0">
+            <div className="bg-gray-200 w-full h-[350px] md:w-[623px] md:h-[647px] rounded-lg flex items-center justify-center">
+              
+            </div>
+          </div>
+
+        <!-- Message Area -->
+        <div class="md:w-1/2 px-2 md:px-12 mt-3">
+          <h2 class="text-2xl md:text-4xl font-bold">
+            Send us a Message
+          </h2>
+          <p class="font-sans text-lg font-medium">
+            Send review please, it will help us to be better!
+          </p>
+          <div class="space-y-2 font-sans">
+            <div class="mt-4">
+              <p class="mb-2 text-black">Email</p>
+              <input type="text" placeholder="Example@gmail.com" class="w-full h-[52px] border-2 border-black px-4 py-2 rounded-md" />
+            </div>
+            <div class="">
+              <p class="mb-2 text-black">Full name</p>
+              <input type="text" placeholder="Enter full name" class="w-full h-[52px] border-2 border-black px-4 py-2 rounded-md" />
+            </div>
+            <div>
+              <p class="mb-2 text-black">Phone number</p>
+              <input type="text" placeholder="Enter Enter phone number" class="w-full h-[52px] border-2 border-black px-4 py-2 rounded-md" />
+            </div>
+            <div>
+  <p class="mb-2 text-black">Message</p>
+  <textarea 
+    placeholder="Enter your message" 
+    class="w-full h-[140px] border-2 border-black px-4 py-2 rounded-md resize-none align-top"
+  ></textarea>
+</div>
+            <div class="mt-8 flex items-center justify-center gap-6">
+          <button
+            class="bg-black text-white w-full font-semibold font-sans  py-5 cursor-pointer rounded-md flex items-center justify-center transition duration-300 hover:bg-black/70"
+          >
+            Send Message
+          </button>
+          
+        </div> 
+          </div>
+        </div>
+      </section>
     </div>
-  </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import login from '@/assets/img/login.png';
-import login2 from '@/assets/img/login2.png';
+<script lang="ts">
 
-const email = ref('');
-const password = ref('');
-const showPassword = ref(false);
-const rememberMe = ref(false);
 
-const togglePassword = () => {
-  showPassword.value = !showPassword.value;
-};
 
-const handleLogin = () => {
-  console.log('Logging in with:', { email: email.value, password: password.value, rememberMe: rememberMe.value });
-};
 </script>
-
-<style scoped>
-
-</style>
