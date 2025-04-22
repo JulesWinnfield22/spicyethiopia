@@ -1,6 +1,13 @@
 <template>
-    <div>
-       <section class="bg-white text-black py-12 px-6 md:px-12 flex flex-col md:flex-row items-start gap-12">
+  <div class="p-6 space-y-8 font-sans">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <h1 class="text-lg font-medium text-gray-800">About</h1>
+      </div>
+    </div>
+    
+    <!-- Editing Sections -->
+    <section class="bg-white text-black py-12 px-6 md:px-12 flex flex-col md:flex-row items-start gap-12">
   <!-- Text Area -->
   <div class="md:w-1/2">
     <div class="flex items-center gap-3 mb-4">
@@ -16,13 +23,21 @@
   </div>
 
   <!-- Grouped Image -->
-  <div class="md:w-1/2 flex justify-center items-start">
-    <img :src="packageGroup" alt="Product collage" class="w-full max-w-md object-contain" />
+  <div class="md:w-1/2 justify-center items-start">
+    <img :src="packageGroup" alt="Product collage" class="w-full max-w-2xl object-contain" />
+    <div class="flex w-full -mt-16 items-center backdrop-blur-2xl justify-end p-2">
+            <div class="flex gap-2">
+                 <button
+                     class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium"
+                    >Change
+                 </button>
+            </div>
+     </div>
   </div>
+  
 </section>
 
-
-      <section class="bg-[#282828] text-white py-12 px-6 md:px-12 flex flex-col md:flex-row gap-10">
+<section class="bg-[#282828] text-white py-12 px-6 md:px-12 flex flex-col md:flex-row gap-10">
   <!-- Image Area -->
   <div class="w-full md:w-1/2 grid grid-cols-2 gap-4">
     <!-- Left column: 2 stacked images -->
@@ -46,13 +61,22 @@
         alt="Gelila Serving Food"
         class="rounded-lg shadow-lg object-cover w-full h-full"
       />
+      
     </div>
+    <div class="flex w-[208%] h-16 -mt-16 items-center backdrop-blur-2xl justify-end p-2">
+            <div class="flex gap-2">
+                 <button
+                     class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium"
+                    >Change
+                 </button>
+            </div>
+     </div>
   </div>
 
         <!-- Text Area -->
         <div class="w-full flex flex-col justify-center md:w-1/2 px-12">
           <h2 class="text-5xl font-bold border-b-2 border-[#A3A3A3] pb-3">
-             Gelila Belete
+            Gelila Belete
           </h2>
           <h3 class="text-white text-lg font-sans font-bold mt-3 mb-3">The Owner of The Spicy Ethiopian</h3>
           <p class="font-sans text-lg mt-4">
@@ -64,28 +88,25 @@
         </div>
 </section>
 
-    </div>
-  
-
-      
+    
+  </div>
 </template>
 
-
-<script>
-import packageGroup from "@/assets/img/packageGroup.png";
+<script lang="ts">
 import gelila1 from "@/assets/img/gelila1.png";
 import gelila2 from "@/assets/img/gelila2.png";
 import gelila3 from "@/assets/img/gelila3.png";
+import packageGroup from "@/assets/img/packageGroup.png";
 
 export default {
     data () {
         return {
-            packageGroup,
             gelila1,
             gelila2,
-            gelila3,
+            gelila3, 
+            packageGroup
         }
+
     }
 }
-
 </script>

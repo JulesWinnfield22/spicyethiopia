@@ -55,7 +55,7 @@
               ETHIOPIAN <br />
               <span
                 class="text-[105px] sm:text-[106px] font-serif leading-tight"
-                style="webkittextstroke: 1px gray; color: white"
+                style="webkit-text-stroke: 1px gray; color: white"
               >
                 SPICES
               </span>
