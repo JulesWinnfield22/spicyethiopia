@@ -9,31 +9,50 @@ import CartPage from "@/views/CartPage.vue";
 import ShippingInformation from "@/views/ShippingInformation.vue";
 import PaymentPage from "@/views/PaymentPage.vue";
 import Checkout from "@/views/Checkout.vue";
+import Admin from "@/features/admin/pages/Admin.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
+import AdminLayout from "@/layouts/AdminLayout.vue";
 
 const routes = [
-  { path: "/", name: "Home", component: Home },
-  { path: "/shop", name: "Shop", component: Shop },
-  { path: "/contact", name: "Contact", component: Contact },
-  { path: "/about", name: "About", component: About },
-  { path: "/recipes", name: "Recipes", component: Recipes },
   {
-    path: "/spice/:id",
-    name: "SpiceDetail",
-    component: () => import("@/views/SpiceDetail.vue"),
-    props: true,
+    path: "/",
+    component: MainLayout,
+    children: [
+      { path: "", name: "Home", component: Home },
+      { path: "shop", name: "Shop", component: Shop },
+      { path: "contact", name: "Contact", component: Contact },
+      { path: "about", name: "About", component: About },
+      { path: "recipes", name: "Recipes", component: Recipes },
+      {
+        path: "spice/:id",
+        name: "SpiceDetail",
+        component: () => import("@/views/SpiceDetail.vue"),
+        props: true,
+      },
+      { path: "cart", name: "Cart", component: CartPage },
+      {
+        path: "shipping",
+        name: "Shipping",
+        component: ShippingInformation,
+      },
+      {
+        path: "payment",
+        name: "Payment",
+        component: PaymentPage,
+      },
+      { path: "checkout", name: "Checkout", component: Checkout },
+    ],
   },
-  { path: "/cart", name: "Cart", component: CartPage },
   {
-    path: "/shipping",
-    name: "Shipping",
-    component: ShippingInformation,
+    path: "/admin",
+    componet: AdminLayout,
+    children: [
+      {
+        path: "",
+        component: Admin,
+      },
+    ],
   },
-  {
-    path: "/payment",
-    name: "/Payment",
-    component: PaymentPage,
-  },
-  { path: "/checkout", name: "/Checkout", component: Checkout },
 ];
 
 const router = createRouter({

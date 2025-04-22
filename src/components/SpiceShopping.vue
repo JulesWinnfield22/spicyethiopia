@@ -5,7 +5,6 @@
       <p class="text-center max-w-xl font-sans text-gray-500 mt-2 mx-auto">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit...
       </p>
-
       <!-- Categories -->
       <div
         class="flex justify-center font-sans mt-6 space-x-6 sm:space-x-12 flex-wrap"
