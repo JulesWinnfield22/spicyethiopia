@@ -4,7 +4,6 @@
   <!-- Text Area -->
   <div class="md:w-1/2">
     <div class="flex items-center gap-3 mb-4">
-      <span class="text-4xl">🌶️</span>
       <h2 class="text-5xl font-bold">About</h2>
     </div>
     <hr class="border-t-2 border-black/40 mb-6" />
@@ -53,7 +52,7 @@
         <!-- Text Area -->
         <div class="w-full flex flex-col justify-center md:w-1/2 px-12">
           <h2 class="text-5xl font-bold border-b-2 border-[#A3A3A3] pb-3">
-           🌸 Gelila Belete
+             Gelila Belete
           </h2>
           <h3 class="text-white text-lg font-sans font-bold mt-3 mb-3">The Owner of The Spicy Ethiopian</h3>
           <p class="font-sans text-lg mt-4">

@@ -11,7 +11,6 @@
   <!-- Text Area -->
   <div class="md:w-1/2">
     <div class="flex items-center gap-3 mb-4">
-      <span class="text-4xl">🌶️</span>
       <h2 class="text-5xl font-bold">About</h2>
     </div>
     <hr class="border-t-2 border-black/40 mb-6" />
@@ -26,7 +25,7 @@
   <!-- Grouped Image -->
   <div class="md:w-1/2 justify-center items-start">
     <img :src="packageGroup" alt="Product collage" class="w-full max-w-2xl object-contain" />
-    <div class="flex w-[370px] -mt-16 ml-24 items-center backdrop-blur-2xl justify-end p-2">
+    <div class="flex w-full -mt-16 items-center backdrop-blur-2xl justify-end p-2">
             <div class="flex gap-2">
                  <button
                      class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium"
@@ -64,7 +63,7 @@
       />
       
     </div>
-    <div class="flex w-[445px] h-16 -mt-16 items-center backdrop-blur-2xl justify-end p-2">
+    <div class="flex w-[208%] h-16 -mt-16 items-center backdrop-blur-2xl justify-end p-2">
             <div class="flex gap-2">
                  <button
                      class="w-24 h-12 bg-black text-white px-4 py-2 cursor-pointer rounded text-sm font-medium"
@@ -77,7 +76,7 @@
         <!-- Text Area -->
         <div class="w-full flex flex-col justify-center md:w-1/2 px-12">
           <h2 class="text-5xl font-bold border-b-2 border-[#A3A3A3] pb-3">
-           🌸 Gelila Belete
+            Gelila Belete
           </h2>
           <h3 class="text-white text-lg font-sans font-bold mt-3 mb-3">The Owner of The Spicy Ethiopian</h3>
           <p class="font-sans text-lg mt-4">
