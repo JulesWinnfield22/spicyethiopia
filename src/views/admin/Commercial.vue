@@ -87,13 +87,13 @@
         <!-- Text Area -->
         <div class="w-full bg-white rounded flex flex-col justify-center md:w-1/2 px-12">
           <div class="p-5 bg-[#F2F3F6] rounded mt-4">
-            <h2 class="text-5xl font-bold">
+            <h2 class="text-5xl font-bold editable">
             Deals of The Month
           </h2>
           </div>
           
         <div class="p-5 bg-[#F2F3F6] rounded mt-4">
-          <p class="font-sans text-lg mt-4">
+          <p class="font-sans text-lg mt-4 editable">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque duis ultrices sollicitudin aliquam sem. Scelerisque duis ultrices sollicitudin 
           </p>
         </div>
@@ -159,34 +159,34 @@
     <!-- Right Section -->
     <div class="w-[48%] space-y-6 px-6 py-8 bg-white text-black rounded-lg shadow">
       <div class="bg-[#F2F3F6] p-5 rounded">
-        <a href="#" class="text-sm">Learn About Berbere</a>
+        <a href="#" class="text-sm editable">Learn About Berbere</a>
       </div>
       <div class="bg-[#F2F3F6] p-5 rounded">
-        <h2 class="text-5xl font-bold leading-tight">
+        <h2 class="text-5xl font-bold leading-tight editable">
           The premier card transcending borders.
         </h2>
       </div>
       <div class="bg-[#F2F3F6] p-5 rounded">
-        <p class="text-lg font-sans">
+        <p class="text-lg font-sans editable">
           Experience the versatility of a Capital Guard card. Spend freely,
           anywhere in the world, anytime.
         </p>
       </div>
       <div class="bg-[#F2F3F6] p-5 rounded">
         <ul class="space-y-3 text-lg font-sans">
-          <li class="flex items-center gap-3">
+          <li class="flex items-center gap-3 editable">
             <span class="bg-white text-black rounded-full w-8 h-8 flex items-center justify-center">
               <i class="fa-solid fa-check"></i>
             </span>
             Accepted worldwide.
           </li>
-          <li class="flex items-center gap-3">
+          <li class="flex items-center gap-3 editable">
             <span class="bg-white text-black rounded-full w-8 h-8 flex items-center justify-center">
               <i class="fa-solid fa-check"></i>
             </span>
             Monitor spending.
           </li>
-          <li class="flex items-center gap-3">
+          <li class="flex items-center gap-3 editable">
             <span class="bg-white text-black rounded-full w-8 h-8 flex items-center justify-center">
               <i class="fa-solid fa-check"></i>
             </span>
@@ -237,67 +237,67 @@
     </div>
 
     <!-- Right Section -->
-    <div class="w-[48%] space-y-6">
-      <div class="bg-[#F2F3F6] p-5 rounded">
-        <a href="#" class="text-lg">Learn About Ethiopia</a>
-      </div>
+   <div class="w-[48%] space-y-6">
+  <div class="bg-[#F2F3F6] p-5 rounded">
+    <a href="#" class="text-lg editable">Learn About Ethiopia</a>
+  </div>
 
-      <div class="bg-[#F2F3F6] p-5 rounded">
-        <h2 class="text-5xl font-bold leading-tight">
-          Getting started with Capital Guard is easy
-        </h2>
-      </div>
+  <div class="bg-[#F2F3F6] p-5 rounded">
+    <h2 class="text-5xl font-bold leading-tight editable">
+      Getting started with Capital Guard is easy
+    </h2>
+  </div>
 
-      <div class="bg-[#F2F3F6] p-5 rounded">
-        <p class="text-lg font-sans font-medium">
-          Begin your financial journey with Capital Guard. Download the app,
-          sign up in minutes, and start managing your money effortlessly. No
-          hassle, just progress.
+  <div class="bg-[#F2F3F6] p-5 rounded">
+    <p class="text-lg font-sans font-medium editable">
+      Begin your financial journey with Capital Guard. Download the app,
+      sign up in minutes, and start managing your money effortlessly. No
+      hassle, just progress.
+    </p>
+  </div>
+
+  <!-- Steps -->
+  <div class="space-y-4">
+    <div class="bg-[#F2F3F6] p-5 rounded space-y-3">
+      <div class="bg-white p-5 rounded">
+        <p class="editable">Sign up for your Capital Guard account.</p>
+      </div>
+      <div class="bg-white p-5 rounded">
+        <p class="editable">
+          Initiate your registration either online or through the Paymint
+          app. We'll request certain personal details such as your contact
+          information, nationality, and passport
         </p>
       </div>
+    </div>
 
-      <!-- Steps -->
-      <div class="space-y-4">
-        <div class="bg-[#F2F3F6] p-5 rounded space-y-3">
-          <div class="bg-white p-5 rounded">
-            <p>Sign up for your Capital Guard account.</p>
-          </div>
-          <div class="bg-white p-5 rounded">
-            <p>
-              Initiate your registration either online or through the Paymint
-              app. We'll request certain personal details such as your contact
-              information, nationality, and passport
-            </p>
-          </div>
-        </div>
-
-        <div class="bg-[#F2F3F6] p-5 rounded space-y-3">
-          <div class="bg-white p-5 rounded">
-            <p>Enter your transfer details</p>
-          </div>
-          <div class="bg-white p-5 rounded">
-            <p>
-              Initiate your registration either online or through the Paymint
-              app. We'll request certain personal details such as your contact
-              information, nationality, and passport
-            </p>
-          </div>
-        </div>
-
-        <div class="bg-[#F2F3F6] p-5 rounded space-y-3">
-          <div class="bg-white p-5 rounded">
-            <p>Send funds for your transfer</p>
-          </div>
-          <div class="bg-white p-5 rounded">
-            <p>
-              Initiate your registration either online or through the Paymint
-              app. We'll request certain personal details such as your contact
-              information, nationality, and passport
-            </p>
-          </div>
-        </div>
+    <div class="bg-[#F2F3F6] p-5 rounded space-y-3">
+      <div class="bg-white p-5 rounded">
+        <p class="editable">Enter your transfer details</p>
+      </div>
+      <div class="bg-white p-5 rounded">
+        <p class="editable">
+          Initiate your registration either online or through the Paymint
+          app. We'll request certain personal details such as your contact
+          information, nationality, and passport
+        </p>
       </div>
     </div>
+
+    <div class="bg-[#F2F3F6] p-5 rounded space-y-3">
+      <div class="bg-white p-5 rounded">
+        <p class="editable">Send funds for your transfer</p>
+      </div>
+      <div class="bg-white p-5 rounded">
+        <p class="editable">
+          Initiate your registration either online or through the Paymint
+          app. We'll request certain personal details such as your contact
+          information, nationality, and passport
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
   </div>
 </section>
@@ -337,4 +337,17 @@ export default {
 
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".editable").forEach((el) => {
+    el.addEventListener("click", () => {
+      el.setAttribute("contenteditable", "true");
+      (el as HTMLElement).focus();
+    });
+
+    el.addEventListener("blur", () => {
+      el.removeAttribute("contenteditable");
+    });
+  });
+});
 </script>
