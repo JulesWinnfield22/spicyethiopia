@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@customizer/modal-x": "^0.0.90",
     "@fortawesome/fontawesome-free": "^6.7.2",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
@@ -20,8 +21,10 @@
     "@heroicons/vue": "^2.2.0",
     "@tailwindcss/vite": "^4.0.15",
     "@vueup/vue-quill": "^1.2.0",
+    "axios": "^1.9.0",
+    "jwt-decode": "^4.0.0",
     "lucide-vue-next": "^0.488.0",
-    "pinia": "^3.0.1",
+    "pinia": "^2.3.1",
     "quill": "^2.0.3",
     "swiper": "^11.2.6",
     "vue": "^3.5.13",
@@ -30,6 +33,7 @@
     "vue3-quill": "^0.3.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^9.7.0",
     "@tailwindcss/postcss": "^4.0.17",
     "@tsconfig/node22": "^22.0.0",
     "@types/node": "^22.13.9",

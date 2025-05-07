@@ -8,12 +8,17 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
+  server: {
+    port: 7777,
+    host: true,
+  },
   plugins: [
     vue(),
     vueJsx(),
     vueDevTools(),
     tailwindcss()
   ],
+  envPrefix: 'v_',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

@@ -1,11 +1,35 @@
 <template>
-  <footer class="bg-[#111111] text-white py-10">
-    <div class="container font-sans mx-auto flex justify-between">
-        <div class="px-12"><img :src="logo" alt="Logo" class="mb-4 w-12" /></div>
-        <div class="grid grid-cols-3">
-         <div class="flex flex-col">
-        <h3 class="text-lg font-sans font-bold">About Us</h3>
-        <ul class="mt-2 space-y-1">
+  <footer class="bg-dark flex flex-col gap-6 text-white p-4 pt-12 lg:p-16">
+    <div class="border-b md:border-none border-gray/30 pb-6" >
+      <img :src="logo" alt="Logo" class=" w-12" />
+    </div>
+    <div class="grid grid-cols-3 md:grid-cols-4 gap-6 border-b border-gray/30 pb-6">
+      <div class="hidden md:flex flex-col gap-4">
+        <h3 class="text-sm md:text-xl font-bold">Contact</h3>
+        <ul class="flex flex-col gap-5 text-xs md:text-sm">
+          <li class="flex items-center gap-6" >
+            <span class="flex-1 flex items-center gap-2">
+              <i v-html="icons.support" />
+              +16478305994
+            </span>
+          </li>
+          <li class="flex items-center gap-6" >
+            <span class="flex-1 flex items-center gap-2">
+              <i v-html="icons.mail" />
+              spicyethiopian@gmail.com
+            </span>
+          </li>
+          <li class="flex items-center gap-6" >
+            <span class="flex-1 flex items-center gap-2">
+              <i v-html="icons.location" />
+              175 Queen St E, Toronto, ON M5A 1S2, Canada
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="flex flex-col gap-4">
+        <h3 class="text-sm md:text-xl font-bold">About Us</h3>
+        <ul class="flex flex-col gap-2 text-xs md:text-sm">
           <li><a href="#" class="hover:underline">Services</a></li>
           <li><a href="#" class="hover:underline">FAQ</a></li>
           <li><a href="#" class="hover:underline">Support</a></li>
@@ -13,62 +37,58 @@
           <li><a href="#" class="hover:underline">Events</a></li>
         </ul>
       </div>
-      <div class="flex flex-col">
-        <h3 class="text-lg font-sans font-bold">Terms</h3>
-        <ul class="mt-2 space-y-1">
+      <div class="flex flex-col gap-4">
+        <h3 class="text-sm md:text-xl font-bold">Terms</h3>
+        <ul class="flex flex-col gap-2 text-xs md:text-sm">
           <li><a href="#" class="hover:underline">Privacy</a></li>
           <li><a href="#" class="hover:underline">Careers</a></li>
           <li><a href="#" class="hover:underline">Investors</a></li>
         </ul>
       </div>
-      <div class="flex flex-col">
-        <h3 class="text-lg font-sans font-bold">Partners</h3>
-        <ul class="mt-2 space-y-1">
+      <div class="flex flex-col gap-4">
+        <h3 class="text-sm md:text-xl font-bold">Partners</h3>
+        <ul class="flex flex-col gap-2 text-xs md:text-sm">
           <li><a href="#" class="hover:underline">Support Center</a></li>
           <li><a href="#" class="hover:underline">Knowledge Base</a></li>
           <li><a href="#" class="hover:underline">Community</a></li>
           <li><a href="#" class="hover:underline">Affiliates</a></li>
           <li><a href="#" class="hover:underline">Become a Partner</a></li>
         </ul>
-      </div></div>
-      
-      <div class="flex flex-col w-1/2 pl-24">
-        <h3 class="text-lg font-sans font-bold">Subscribe</h3>
-        <p class="mt-2">Stay updated with our latest features and releases.</p>
-        <div class="grid-cols-2 gap-2"><input
-          type="email"
-          placeholder="Enter email address"
-          class="w-[377px] h-[48px] mt-2 mr-3 p-2 rounded-4xl font-sans bg-[#0C0C0C] text-white   focus:outline-none focus:ring-2 focus:ring-white"
-        />
-        <button class="w-[107px] h-[48px] mt-2 bg-white text-black font-sans font-semibold p-2 rounded-4xl hover:bg-green-600 transition">Subscribe</button></div>
-        
-        <p class="mt-4 text-sm">
-          By subscribing, you agree to our <a href="#" class="underline">Privacy Policy</a> and consent to receive updates.
-        </p>
       </div>
     </div>
-    <div class="flex mt-10 font-sans px-10 border-t border-[#FFFFFF]/40 pt-4 text-center">
-      <p class="text-sm px-8 mt-1">© 2023. All rights reserved.</p>
-      <div class="flex justify-center space-x-4 ">
-        <a href="#" class="hover:underline">Privacy Policy</a>
-        <a href="#" class="hover:underline">Terms of Service</a>
-        <a href="#" class="hover:underline">Cookies Settings</a>
+    <div class="flex flex-col gap-4 md:flex-row items-center md:justify-between" >
+      <div class="flex justify-center gap-6 items-center p-4" >
+        <button>
+          <i v-html="icons.fb" />
+        </button>
+        <button>
+          <i v-html="icons.ig" />
+        </button>
+        <button>
+          <i v-html="icons.x" />
+        </button>
+        <button>
+          <i v-html="icons.li" />
+        </button>
+        <button>
+          <i v-html="icons.yt" />
+        </button>
+      </div>
+      <span class="truncate" >&copy; {{ (new Date()).getFullYear() }} All rights reserved.</span>
+      <div class="text-sm grid gap-6 place-items-center" >
+        <div class="text-gray flex gap-4 justify-center flex-wrap *:underline underline-offset-4 font-light" >
+          <a href="#" >Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Cookies Settings</a>
+        </div>
       </div>
     </div>
   </footer>
 </template>
 
-<script>
-import logo from '@/assets/img/footerLogo.png'; // Adjust the path as necessary
-
-export default {
-  name: 'FooterComponent',
-  data() {
-    return {
-      logo,
-    };
-  },
-};
+<script setup lang="ts" >
+import logo from "@/assets/img/footerLogo.png"; // Adjust the path as necessary
+import icons from "@/utils/icons";
 </script>
 
 <style scoped>

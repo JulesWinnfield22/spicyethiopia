@@ -1,94 +1,95 @@
+<script lang="ts" setup>
+import logo from "@/assets/img/spicylogo.png";
+import { useDashboardCounts } from "../composables/useDashboardCounts";
+import navs from "@/config/navs";
+import { RouterLink } from "vue-router";
+import { groupBy } from "@/utils/array";
+import { ref } from "vue";
+import icons from "@/utils/icons";
+const filterdNavs = groupBy(navs, "group");
+const { totalOrdersCount } = useDashboardCounts();
+
+const open = ref(false);
+
+function logout() {
+  localStorage.clear()
+  location.href = '/login'
+}
+</script>
 
 <template>
-  <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <div class="w-64 bg-black text-white font-sans flex flex-col justify-between">
-      <!-- Top Logo -->
-      <div>
-        <div class="py-4 px-6">
-          <a href="/">
-            <img :src="logo" alt="Logo" style="height: 40px;" />
-          </a>
-        </div>
-
-        <!-- Home -->
-        <div class="mb-2 flex items-center px-6 py-2.5 text-gray-200 hover:text-white">
-          <i class="fa-solid fa-house-user"></i>
-          <span class="mx-2 text-sm">Home</span>
-        </div>
-
-        <!-- Orders Section -->
-        <div class="mb-4 px-6">
-          <h3 class="mb-2 text-xs text-gray-400 uppercase tracking-widest">Orders</h3>
-          <router-link to="/admin/orders" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-bell mr-2"></i>
-            Orders
-            <span class="ml-auto bg-white text-black text-xs font-bold rounded-full px-2">{{ totalOrdersCount }}</span>
-          </router-link>
-          <router-link to="/admin/products" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-list mr-2"></i>
-            Products
-          </router-link>
-          <router-link to="/admin/commercial" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-bullhorn mr-2"></i>
-            Commercial
-          </router-link>
-          <router-link to="/admin/messages" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-comment mr-2"></i>
-            Messages
-            <span class="ml-auto bg-white text-black text-xs font-bold rounded-full px-2">1</span>
-          </router-link>
-        </div>
-
-        <!-- CMS Section -->
-        <div class="mb-4 px-6">
-          <h3 class="mb-2 text-xs text-gray-400 uppercase tracking-widest">CMS</h3>
-          <router-link to="/admin/about" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-book mr-2"></i>
-            About
-          </router-link>
-          <router-link to="/admin/contact-info" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-address-book mr-2"></i>
-            Contact Information
-          </router-link>
-          <router-link to="/admin/recipes" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-utensils mr-2"></i>
-            Recipes
-          </router-link>
-        </div>
-
-        <!-- Settings Section -->
-        <div class="mb-4 px-6">
-          <h3 class="mb-2 text-xs text-gray-400 uppercase tracking-widest">Settings</h3>
-          <router-link to="/admin/users" class="flex items-center px-3 py-2 text-sm hover:bg-gray-800 rounded">
-            <i class="fa-solid fa-users-gear mr-2"></i>
-            Users
-          </router-link>
+  <div class="flex h-full w-full">
+    <nav
+      class="__drawer overflow-hidden w-64 bg-black text-white flex flex-col justify-between"
+    >
+      <div class="px-6 py-4">
+        <a href="/">
+          <img :src="logo" alt="Logo" style="height: 40px" />
+        </a>
+      </div>
+      <div class="flex-1 overflow-auto flex flex-col gap-4">
+        <div
+          class="px-6 flex flex-col gap-1"
+          v-for="key in Object.keys(filterdNavs)"
+        >
+          <span
+            v-if="!filterdNavs[key]?.[0]?.skip"
+            class="capitalize opacity-60"
+            >{{ key }}</span
+          >
+          <div class="flex flex-col gap-1">
+            <RouterLink
+              :to="nav.path"
+              :key="nav.name"
+              v-for="nav in filterdNavs[key]"
+              class="h-9.5 flex px-2 rounded items-center text-white"
+            >
+              <i v-html="nav.icon"></i>
+              <span class="mx-2 text-sm">{{ nav.name }}</span>
+            </RouterLink>
+          </div>
         </div>
       </div>
-
-      <!-- User Footer -->
-      <div class="px-6 py-4 flex items-center justify-between">
-        <div class="flex items-center">
-          <div class="w-3 h-3 bg-white rounded-full mr-2"></div>
-          <span class="text-sm">Birhane Araya</span>
+      <div
+        :class="[open ? 'h-24' : 'h-12']"
+        class="transition-all flex flex-col"
+      >
+        <div
+          v-ripple
+          @click="open = !open"
+          class="border-t border-gray/10 cursor-pointer min-h-12 px-6 flex items-center justify-between"
+        >
+          <div class="flex items-center">
+            <div class="w-3 h-3 bg-white rounded-full mr-2"></div>
+            <span class="text-sm">Birhane Araya</span>
+          </div>
+          <i
+            :class="[open ? 'rotate-90' : 'rotate-0']"
+            class="fa-solid fa-chevron-right text-sm"
+          ></i>
         </div>
-        <i class="fa-solid fa-chevron-right text-sm"></i>
+        <button
+          @click="logout"
+          v-ripple
+          class="cursor-pointer flex items-center text-red-500 px-4 gap-3 bg-white/10 min-h-12"
+        >
+          <i v-html="icons.logout" />
+          <span>Logout</span>
+        </button>
       </div>
-    </div>
-
-    <!-- Right Main Content -->
-    <div class="flex-1 bg-gray-50 p-6">
+    </nav>
+    <div class="relative flex-1 h-full overflow-y-auto">
       <router-view />
+      <small class="mt-4 block text-xs bg-gray p-2 font-semibold text-gray-800">
+        ©{{ new Date().getFullYear() }}, The Spicy Ethiopian
+      </small>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import logo from "@/assets/img/spicylogo.png";
-import { useDashboardCounts } from '../composables/useDashboardCounts'
-
-const { totalOrdersCount } = useDashboardCounts()
-
-
-</script>
+<style scoped>
+.__drawer a:hover,
+.__drawer .router-link-exact-active {
+  background-color: #fff1;
+}
+</style>

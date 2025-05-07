@@ -1,254 +1,128 @@
+<script setup lang="ts">
+import { RouterLink } from "vue-router";
+import { useApiRequest } from "@/composables/useApiRequest";
+import { getProducts } from "@/features/admin/api/productApi";
+import { staticRoute } from "@/utils/utils";
+import icons from "@/utils/icons";
+import { usePagination } from "@/composables/usePagination";
+import type { Query } from "@/interface";
+
+const props = defineProps({
+  showHeader: {
+    type: Boolean,
+    default: true,
+  },
+  searching: {
+    type: Boolean,
+    defaul: false,
+  },
+});
+
+const pagination = usePagination({
+  cb: (params: Query) => getProducts(params),
+});
+</script>
 <template>
-  <section class="py-16 bg-white">
-    <div class="container mx-auto px-4">
-      <h2 class="text-3xl font-bold text-center">Featured Spices</h2>
-      <p class="text-center max-w-xl font-sans text-gray-500 mt-2 mx-auto">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit...
+  <section class="bg-white py-8 md:p-12">
+    <div class="container flex flex-col gap-6 mx-auto px-4">
+      <h2
+        v-if="showHeader"
+        class="text-2xl sm:text-4xl font-bold font-dm-serif text-center"
+      >
+        Featured Spices
+      </h2>
+      <p
+        v-if="showHeader"
+        class="font-light text-sm sm:text-base text-center max-w-[40ch] md:max-w-xl font-sans mx-auto"
+      >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Scelerisque
+        duis ultrices sollicitudin aliquam sem. Scelerisque duis ultrices
+        sollicitudin
       </p>
-      <!-- Categories -->
-      <div
+      <!-- <div
         class="flex justify-center font-sans mt-6 space-x-6 sm:space-x-12 flex-wrap"
       >
         <button
-          v-for="category in categories"
+          v-for="category in data.categories"
           :key="category"
-          @click="selectedCategory = category"
+          @click="data.selectedCategory = category"
           class="px-4 py-2 rounded-full cursor-pointer font-semibold transition"
           :class="
-            selectedCategory === category
+            data.selectedCategory === category
               ? 'bg-black text-white'
               : 'text-gray-700 hover:bg-gray-100'
           "
         >
           {{ category }}
         </button>
-      </div>
-
-      <!-- Spices Grid -->
+      </div> -->
       <div
-        class="grid grid-cols-1 font-sans sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 mt-10"
+        v-if="searching"
+        class="flex md:max-w-[40em] border-b mx-auto h-12 md:my-8 rounded border-2 border-dark w-full"
       >
+        <div class="h-full w-10 grid place-items-center">
+          <i v-html="icons.search" />
+        </div>
+        <input
+          style="outline: none; width: 100%"
+          v-model.trim="pagination.search.value"
+          placeholder="Search Spices"
+          lass="pl-3 min-w-0 flex-1 h-full"
+        />
+      </div>
+      <div class="min-h-[20rem]" >
         <div
-          v-for="spice in filteredSpices"
-          :key="spice.id"
-          class="bg-white p-6 shadow-lg rounded-lg overflow-hidden flex flex-col transition-transform hover:scale-105 duration-200"
+          v-if="pagination.data.value?.response?.length != 0"
+          class="grid grid-cols-2 justify-self-center lg:grid-cols-3 max-w-max mx-auto justify-center gap-4 lg:gap-8"
         >
-          <!-- Only the image links to detail -->
-          <RouterLink
-            :to="{ name: 'SpiceDetail', params: { id: spice.id } }"
-            class="block"
+          <div
+            v-for="spice in pagination.data.value?.response || []"
+            :key="spice.id"
+            class="bg-white relative p-2 sm:p-6 shadow rounded-lg overflow-hidden flex flex-col transition-transform hover:scale-105 duration-200"
           >
-            <img
-              :src="spice.image"
-              :alt="spice.name"
-              class="w-full h-48 object-cover rounded-lg"
-            />
-
-            <div
-              class="p-4 flex flex-col sm:flex-row justify-between items-center sm:items-start mt-4"
+            <button
+              class="cursor-pointer sm:hidden absolute h-6 w-10 rounded-lg shadow-2xl grid place-items-center top-4 right-4 bg-black/50 text-white"
             >
-              <div class="sm:w-2/3">
-                <h3 class="text-lg font-semibold">{{ spice.name }}</h3>
-                <p class="text-gray-500 text-sm">Spice</p>
-                <p class="text-3xl font-semibold mt-4">${{ spice.price }}</p>
+              <i v-html="icons.cart" class="*:size-4" />
+            </button>
+            <RouterLink
+              :to="{ name: 'SpiceDetail', params: { id: spice.id } }"
+              class="block flex-1"
+            >
+              <img
+                :src="`${staticRoute}/${spice.images[0]}`"
+                class="w-full min-h-[6rem] md:max-w-[20rem] md:h-[16rem] rounded-lg"
+              />
+  
+              <div class="py-2 sm:py-4 flex flex-col">
+                <h3 class="text-sm sm:text-xl truncate font-medium">
+                  {{ spice.title }}
+                </h3>
+                <p class="text-[rgba(138_138_138)] text-sm">Spice</p>
               </div>
-
-              <div class="flex flex-col items-end sm:w-1/3 sm:mt-0 mt-4">
-                <div class="flex mb-2">
-                  <i
-                    v-for="n in spice.rating"
-                    :key="n"
-                    class="fas fa-star text-black"
-                  ></i>
-                  <i
-                    v-for="n in 5 - spice.rating"
-                    :key="5 - n"
-                    class="fas fa-star text-gray-300"
-                  ></i>
-                </div>
+              <div class="sm:py-4 flex items-center justify-between">
+                <p class="text-sm sm:text-3xl font-bold sm:font-semibold">
+                  ${{ spice.price }}
+                </p>
                 <button
-                  @click="addToCart(spice)"
-                  class="mt-4 sm:mt-12 bg-black text-white px-4 py-2 cursor-pointer rounded-full flex justify-center items-center gap-2"
+                  class="hidden sm:flex bg-black text-white px-4 py-2 cursor-pointer rounded-full justify-center items-center gap-2"
                 >
-                  Add <i class="fas fa-shopping-cart"></i>
+                  Add <i v-html="icons.cart"></i>
                 </button>
               </div>
-            </div>
-          </RouterLink>
+            </RouterLink>
+          </div>
+        </div>
+        <div v-else class="h-full w-full">
+          <div class="grid place-items-center" v-if="!pagination.pending.value">
+            <i class="*:size-56" v-html="icons.no_data" />
+            <span class="text-lg font-bold">No Poducts Found</span>
+          </div>
+          <div class="grid place-items-center" v-else>
+            <i class="*:size-20" v-html="icons.spinner" />
+          </div>
         </div>
       </div>
-
-      <!-- Wishlist -->
-      <button
-        class="mt-12 font-sans bg-black text-white px-4 py-2 rounded-full flex justify-center items-center cursor-pointer mx-auto gap-2"
-      >
-        Wishlist
-      </button>
     </div>
   </section>
 </template>
-
-<script lang="ts" scoped>
-import { RouterLink } from "vue-router";
-import spiceOne from "@/assets/img/spiceOne.png";
-import spiceTwo from "@/assets/img/spiceTwo.png";
-import spiceThree from "@/assets/img/spiceThree.png";
-import spiceFour from "@/assets/img/spiceFour.png";
-import spiceFive from "@/assets/img/spiceFive.png";
-import spiceSix from "@/assets/img/spiceSix.png";
-import spiceSeven from "@/assets/img/spiceSeven.png";
-import spiceEight from "@/assets/img/spiceEight.png";
-import spiceNine from "@/assets/img/spiceNine.png";
-import spiceTen from "@/assets/img/spiceTen.png";
-import spiceEleven from "@/assets/img/spiceEleven.png";
-import spiceTwelve from "@/assets/img/spiceTwelve.png";
-
-interface Spice {
-  id: number;
-  name: string;
-  price: number;
-  category: string;
-  image: string;
-  rating: number;
-}
-
-export default {
-  data() {
-    return {
-      selectedCategory: "Berbere",
-      categories: [
-        "Berbere",
-        "Shiro",
-        "Tiratire",
-        "Special Spices",
-        "Nechshinkurt",
-        "Kundo Berbere",
-      ],
-      spices: [
-        {
-          id: 1,
-          name: "Berbere",
-          price: 95.5,
-          category: "Berbere",
-          image: spiceOne,
-          rating: 5,
-        },
-        {
-          id: 2,
-          name: "Shiro",
-          price: 80.0,
-          category: "Shiro",
-          image: spiceTwo,
-          rating: 5,
-        },
-        {
-          id: 3,
-          name: "Tiratire",
-          price: 105.0,
-          category: "Tiratire",
-          image: spiceThree,
-          rating: 5,
-        },
-        {
-          id: 4,
-          name: "Special Blend",
-          price: 120.0,
-          category: "Special Spices",
-          image: spiceFour,
-          rating: 4,
-        },
-        {
-          id: 5,
-          name: "Nechshinkurt",
-          price: 90.0,
-          category: "Nechshinkurt",
-          image: spiceFive,
-          rating: 5,
-        },
-        {
-          id: 6,
-          name: "Kundo Berbere",
-          price: 115.0,
-          category: "Kundo Berbere",
-          image: spiceSix,
-          rating: 5,
-        },
-        {
-          id: 7,
-          name: "Hot Mitmita",
-          price: 99.0,
-          category: "Berbere",
-          image: spiceSeven,
-          rating: 4,
-        },
-        {
-          id: 8,
-          name: "Sweet Shiro",
-          price: 85.0,
-          category: "Shiro",
-          image: spiceEight,
-          rating: 5,
-        },
-        {
-          id: 9,
-          name: "Spice Blend",
-          price: 110.0,
-          category: "Special Spices",
-          image: spiceNine,
-          rating: 4,
-        },
-        {
-          id: 10,
-          name: "Classic Shiro",
-          price: 88.0,
-          category: "Shiro",
-          image: spiceTen,
-          rating: 4,
-        },
-        {
-          id: 11,
-          name: "Premium Berbere",
-          price: 130.0,
-          category: "Berbere",
-          image: spiceEleven,
-          rating: 5,
-        },
-        {
-          id: 12,
-          name: "Authentic Mitmita",
-          price: 102.0,
-          category: "Berbere",
-          image: spiceTwelve,
-          rating: 4,
-        },
-      ],
-    };
-  },
-  computed: {
-    filteredSpices(): Spice[] {
-      return this.selectedCategory === "All"
-        ? this.spices
-        : this.spices.filter(
-            (s: Spice) => s.category === this.selectedCategory
-          );
-    },
-  },
-  methods: {
-    addToCart(spice: Spice) {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const existing = cart.find((item: any) => item.id === spice.id);
-
-      if (existing) {
-        existing.quantity += 1;
-      } else {
-        cart.push({ ...spice, quantity: 1 });
-      }
-
-      localStorage.setItem("cart", JSON.stringify(cart));
-      window.dispatchEvent(new Event("cart-updated"));
-      alert(`${spice.name} added to cart!`);
-    },
-  },
-};
-</script>

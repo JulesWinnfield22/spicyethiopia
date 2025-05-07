@@ -1,77 +1,96 @@
+<script setup lang="ts">
+import Button from '@/components/Button.vue';
+import Form from '@/components/new_form_builder/Form.vue';
+import { Input, Textarea } from '@/components/new_form_elements';
+
+function sendMessage() {
+
+}
+</script>
 <template>
-    <div class="overflow-x-hidden">
-        <section class="bg-black text-white py-16 text-center">
-      <div class="container mx-auto px-8">
-        <h1 class="text-2xl md:text-7xl font-semibold leading-tight font-serif ">
-          We value your reviews and messages.
+  <div class="overflow-x-hidden">
+    <section class="bg-black __contact_bg text-white text-center">
+      <div class="bg-black/60 grid place-items-center gap-6 mx-auto md:px-8 py-16">
+        <h1 class="header-size font-dm-serif font-semibold md:max-w-[15ch] leading-tight">
+          We value your reviews and message
         </h1>
-        <p class="mt-4 font-sans max-w-3xl mx-auto text-base md:text-xl border-t-2 border-white pt-3">
-          Your thoughts help us grow — feel free to reach out <br/> with questions, suggestions, or reviews.
+        <p
+          class="description-size mx-auto border-t-2 border-white pt-3"
+        >
+          Your thoughts help us grow — feel free to reach out <br />
+          with questions, suggestions, or reviews.
         </p>
         <div class="mt-8 flex justify-center gap-6">
-          <button
-            class="bg-white text-black font-semibold font-sans px-6 py-3 cursor-pointer rounded-full flex items-center gap-2 transition duration-300 hover:bg-gray-100"
-          >
+          <Button type="primary">
             Call us Instead
-          </button>
-          
+          </Button>
         </div>
       </div>
     </section>
-    <section
-        class="bg-white text-black py-12 px-4 md:px-12 flex flex-col md:flex-row items-center"
-      >
-      <!-- Map Ares -->
-        <div className="w-full md:w-1/2 md:px-6 mt-4 md:mt-0">
-            <div className="bg-gray-200 w-full h-[350px] md:w-[623px] md:h-[647px] rounded-lg flex items-center justify-center">
-              
-            </div>
-          </div>
 
-        <!-- Message Area -->
-        <div class="md:w-1/2 px-2 md:px-12 mt-3">
-          <h2 class="text-2xl md:text-4xl font-bold">
-            Send us a Message
-          </h2>
-          <p class="font-sans text-lg font-medium">
+    <section
+      class="mx-auto container py-12 px-4 md:px-12 gap-6 grid md:grid-cols-2"
+    >
+      <div
+        className="bg-gray min-h-[20rem] rounded-lg flex items-center justify-center"
+      ></div>
+      <div class="grid gap-4">
+        <div>
+          <h2 class="text-2xl md:text-4xl font-bold font-dm-serif">Send us a Message</h2>
+          <p class="text-base">
             Send review please, it will help us to be better!
           </p>
-          <div class="space-y-2 font-sans">
-            <div class="mt-4">
-              <p class="mb-2 text-black">Email</p>
-              <input type="text" placeholder="Example@gmail.com" class="w-full h-[52px] border-2 border-black px-4 py-2 rounded-md" />
-            </div>
-            <div class="">
-              <p class="mb-2 text-black">Full name</p>
-              <input type="text" placeholder="Enter full name" class="w-full h-[52px] border-2 border-black px-4 py-2 rounded-md" />
-            </div>
-            <div>
-              <p class="mb-2 text-black">Phone number</p>
-              <input type="text" placeholder="Enter Enter phone number" class="w-full h-[52px] border-2 border-black px-4 py-2 rounded-md" />
-            </div>
-            <div>
-  <p class="mb-2 text-black">Message</p>
-  <textarea 
-    placeholder="Enter your message" 
-    class="w-full h-[140px] border-2 border-black px-4 py-2 rounded-md resize-none align-top"
-  ></textarea>
-</div>
-            <div class="mt-8 flex items-center justify-center gap-6">
-          <button
-            class="bg-black text-white w-full font-semibold font-sans  py-5 cursor-pointer rounded-md flex items-center justify-center transition duration-300 hover:bg-black/70"
-          >
-            Send Message
-          </button>
-          
-        </div> 
-          </div>
         </div>
-      </section>
-    </div>
+        <Form v-slot="{ submit }" id="message" class="grid gap-4" >
+          <Input 
+            name="email"
+            label="Email"
+            :attributes="{
+              placeholder: 'example@gmail.com'
+            }"
+            validation="required|email"
+          />
+          <Input 
+            name="fullname"
+            label="Full Name"
+            :attributes="{
+              placeholder: 'Full Name'
+            }"
+            validation="required|alpha|mimax-2,15"
+          />
+          <Input 
+            name="phone"
+            label="Phone Number"
+            :attributes="{
+              placeholder: 'Enter Your Phone Number'
+            }"
+            validation="required|email"
+          />
+          <Textarea 
+            name="message"
+            label="Message"
+            :attributes="{
+              placeholder: 'Write Your Message'
+            }"
+            validation="required|minmax-10,100"
+          />
+          <div class="">
+            <Button
+              @click.prevent="submit(sendMessage)"
+              class="bg-black text-white w-full font-semibold font-sans py-5 cursor-pointer rounded-md flex items-center justify-center transition duration-300 hover:bg-black/70"
+            >
+              Send Message
+            </Button>
+          </div>
+        </Form>
+      </div>
+    </section>
+  </div>
 </template>
 
-<script lang="ts">
-
-
-
-</script>
+<style scoped >
+  .__contact_bg {
+    background-image: url('../assets/img/contact.jpg');
+    background-size: cover;
+  }
+</style>
