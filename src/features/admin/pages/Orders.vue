@@ -3,6 +3,8 @@ import AdminDefaultPageWrapper from "@/components/AdminDefaultPageWrapper.vue";
 import Button from "@/components/Button.vue";
 import ShipmentStatusCell from "@/components/ShipmentStatusCell.vue";
 import Table from "@/components/Table.vue";
+import { usePagination } from "@/composables/usePagination";
+import { getOrders } from "@/features/public/api/orderApi";
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
 
@@ -13,9 +15,9 @@ const toggleDropdown = (index: number) => {
 
 const router = useRouter();
 
-const goToAddProduct = () => {
-  router.push("/addProduct");
-};
+const pagination = usePagination({
+  cb: getOrders,
+});
 
 const handleAction = (product: any, action: string) => {
   alert(`Action "${action}" for product ${product.id}`);
@@ -26,7 +28,7 @@ const filters = ["Waiting", "Shipped", "Delivered", "Refunded", "All"];
 const activeFilter = ref("Waiting");
 </script>
 <template>
-  <AdminDefaultPageWrapper>
+  <AdminDefaultPageWrapper >
     <template #actions>
       <Button type="secondary"> New Orders </Button>
     </template>
@@ -46,6 +48,7 @@ const activeFilter = ref("Waiting");
           class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 transform -translate-y-1/2 text-black/30"
         ></i>
         <input
+          v-model="pagination.search.value"
           type="text"
           placeholder="Search Products"
           class="bg-gray px-10 py-1 rounded-md text-base w-96 h-12"
@@ -53,6 +56,7 @@ const activeFilter = ref("Waiting");
       </div>
     </div>
     <Table
+      :pending="pagination.pending.value"
       :headers="{
         head: [
           'Order ID',
@@ -64,11 +68,19 @@ const activeFilter = ref("Waiting");
           'Status',
           'Actions',
         ],
-        row: ['id', 'customer', 'item', 'price', 'phone', 'since', 'status'],
+        row: [
+          'id',
+          'customerInfo.fullName',
+          'item',
+          'subtotal',
+          'customerInfo.phoneNumber',
+          'since',
+          'orderStatus',
+        ],
       }"
-      :data="[]"
+      :data="pagination.data.value?.data?.response || []"
       :cells="{
-        status: ShipmentStatusCell,
+        orderStatus: ShipmentStatusCell,
       }"
     >
       <template #actions="{ row, index }">

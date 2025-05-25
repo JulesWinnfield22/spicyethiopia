@@ -17,6 +17,8 @@ import icons from "@/utils/icons";
 import DealsOfTheMonth from "@/components/DealsOfTheMonth.vue";
 import Ad from "@/components/Ad.vue";
 import Ad2 from "@/components/Ad2.vue";
+import { useApiRequest } from "@/composables/useApiRequest";
+import { getTopDeals } from "@/features/admin/api/productApi";
 
 const steps = [
   {
@@ -60,9 +62,6 @@ const featuere = [
     description: "Dedicated support",
   },
 ];
-function toggleStep(index: number) {
-  steps[index].expanded = !steps[index].expanded;
-}
 </script>
 
 <template>

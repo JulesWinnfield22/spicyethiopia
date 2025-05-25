@@ -11,7 +11,7 @@ import {
   type ProductImage,
 } from "@/features/admin/store/productsStore";
 import icons from "@/utils/icons";
-import { toasted } from "@/utils/utils";
+import { toasted, toFormData } from "@/utils/utils";
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
@@ -46,16 +46,10 @@ const productReq = useApiRequest();
 function editProduct(values: Product) {
   if (productReq.pending.value || product.value?.id == undefined) return;
 
-  const fd = new FormData();
+  const fd = toFormData(values, ["ingredients", "instructions"]);
 
-  Object.keys(values).forEach((el: any) => {
-    if (el == "images") {
-      (values.images as ProductImage[]).forEach((image) => {
-        fd.append(el, image.file);
-      });
-    } else {
-      fd.append(el, values[el]);
-    }
+  values.images.forEach((image) => {
+    fd.append("images", (image as ProductImage).file);
   });
 
   productReq.send(

@@ -34,7 +34,7 @@ watch(() => pend, () => {
       $style?.[type ? type : ''],
       fullwidth && 'fullwidth',
     ]"
-    class="cursor-pointer relative btn flex items-center justify-center rounded capitalize"
+    class="cursor-pointer hover:bg-gray relative btn flex items-center justify-center rounded capitalize"
   >
     <slot></slot>
     <p

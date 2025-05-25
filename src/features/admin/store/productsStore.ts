@@ -12,7 +12,7 @@ export interface Product {
   price: number;
   discountPercentage: number;
   discountExpiry?: Date;
-  discountedPrice?: number;
+  discountedPrice: number;
   isDiscounted: boolean;
   weight: string;
   weightUnit: "g" | "kg" | "ml" | "l";

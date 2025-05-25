@@ -4,14 +4,14 @@ import type { Product } from "../store/productsStore";
 
 const api = new ApiService();
 
-const paths = "/products";
+const path = "/products";
 
 /**
  * Get all products
  * @returns Promise with array of products
  */
 export function getProducts(query: Query) {
-  return api.get<Product[]>(`${paths}/all`, {
+  return api.get<Product[]>(`${path}/all`, {
     params: query,
   });
 }
@@ -22,7 +22,7 @@ export function getProducts(query: Query) {
  * @returns Promise with product data
  */
 export function getProductById(id: string) {
-  return api.get<Product>(`${paths}/${id}`);
+  return api.get<Product>(`${path}/${id}`);
 }
 
 /**
@@ -31,7 +31,7 @@ export function getProductById(id: string) {
  * @returns Promise with created product data
  */
 export function createProduct(productData: FormData) {
-  return api.addAuthenticationHeader().post<Product>(`${paths}`, productData, {
+  return api.addAuthenticationHeader().post<Product>(`${path}`, productData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -47,7 +47,7 @@ export function createProduct(productData: FormData) {
 export function updateProduct(id: string, productData: FormData) {
   return api
     .addAuthenticationHeader()
-    .put<Product>(`${paths}/${id}`, productData, {
+    .put<Product>(`${path}/${id}`, productData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -60,7 +60,7 @@ export function updateProduct(id: string, productData: FormData) {
  * @returns Promise with deletion status
  */
 export function deleteProduct(id: string) {
-  return api.delete(`${paths}/${id}`);
+  return api.delete(`${path}/${id}`);
 }
 
 /**
@@ -70,5 +70,10 @@ export function deleteProduct(id: string) {
  * @returns Promise with updated product data
  */
 export function updateProductStatus(id: string, status: string) {
-  return api.patch<Product>(`${paths}/${id}/status`, { status });
+  return api.patch<Product>(`${path}/${id}/status`, { status });
+}
+
+
+export function getTopDeals() {
+  return api.get<Product[]>(`${path}/top-deals`)
 }

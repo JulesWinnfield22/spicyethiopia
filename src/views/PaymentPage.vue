@@ -43,13 +43,13 @@
                 <router-link to="/shipping" style="font-size: 16px; font-weight: 400;" class="text-[rgb(17,17,17)] hover:underline">
                     <button class="text-sm text-gray-400 underline cursor-pointer">Change</button>
                 </router-link>
-                
-            </div>          
-            <div class=" flex justify-between items-center">      
+
+            </div>
+            <div class=" flex justify-between items-center">
               <div>
                 <p class="font-medium"><i class="fa-solid fa-location-dot"></i> Home</p>
                 <p class="text-sm text-gray-500">925 S Chugach St #APT 10, Alaska 99645</p>
-              </div>             
+              </div>
             </div>
           </div>
 
@@ -62,7 +62,7 @@
                 <p class="mb-4 text-[#7E7E7E]">Card number</p>
                 <input type="text" placeholder="Enter your card number" class="w-full h-[52px] border border-neutral-300 px-4 py-2 rounded-md text-sm mb-3 " />
             </div>
-            
+
             <div class="grid grid-cols-2 gap-4 mt-3">
                 <div>
                     <p class="mb-4 text-[#7E7E7E]">Expiry Date</p>
@@ -72,7 +72,7 @@
                     <p class="mb-4 text-[#7E7E7E]">Security Code</p>
                     <input type="text" placeholder="CVC" class="w-full h-[52px] border border-neutral-300 px-4 py-2 rounded-md text-sm" />
                 </div>
-              
+
             </div>
           </div>
         </div>
@@ -97,34 +97,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+<script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useCartStore } from '@/stores/cartStore';
 
-export default defineComponent({
-  setup() {
-    const router = useRouter();
-    const total = ref(0);
+const router = useRouter();
+const cartStore = useCartStore();
 
-    const loadCartTotal = () => {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      total.value = cart.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
-    };
-
-    const goToCheckout = () => {
-      router.push('/checkout');
-    };
-
-    onMounted(() => {
-      loadCartTotal();
-    });
-
-    return {
-      total,
-      goToCheckout,
-    };
-  },
-});
+const goToCheckout = () => {
+  router.push('/checkout');
+};
 </script>
 
 <style scoped>

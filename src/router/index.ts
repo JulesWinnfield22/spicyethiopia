@@ -28,6 +28,7 @@ import Login from "@/features/admin/pages/Login.vue";
 import { useAuth } from "@/features/admin/store/authStore";
 import { isTokenExpired } from "@/utils/utils";
 import EditProduct from "@/views/admin/EditProduct.vue";
+import Discount from "@/features/admin/discount/pages/Discount.vue";
 
 declare module "vue-router" {
   interface RouteMeta {
@@ -57,7 +58,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import("@/views/SpiceDetail.vue"),
         props: true,
       },
-      { path: "cart", name: "Cart", component: CartPage },
+      { path: "cart/:type(success|cancel)?", name: "Cart", component: CartPage },
       {
         path: "shipping",
         name: "Shipping",
@@ -88,6 +89,11 @@ const routes: RouteRecordRaw[] = [
         path: "product/edit/:productId",
         name: "Edit Product",
         component: EditProduct,
+      },
+      {
+        path: 'discount',
+        name: 'Discount',
+        component: Discount
       },
       { path: "commercial", name: "Commercial", component: Commercial },
       { path: "messages", name: "Messages", component: Messages },

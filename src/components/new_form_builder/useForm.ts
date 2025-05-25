@@ -58,7 +58,6 @@ export function useForm(id: string, inner = true, childrenName?: string) {
         (state: { [key: string]: any }, el: any) => {
           let name: string = el?.getAttribute?.("name") || "name";
           let skip = el.getAttribute("data-skip")
-          console.log(name, el.dataset["val"], skip);
           if (el.getAttribute('type') == "file" && el != null && name != undefined) {
             console.log(el.val);
             

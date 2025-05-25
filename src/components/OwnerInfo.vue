@@ -5,7 +5,7 @@ import TextEditable from "./TextEditable.vue";
 
 <template>
   <section class="w-[99.3vw] bg-dark p-4 md:12 lg:p-20 grid md:grid-cols-2 gap-10">
-    <div class="sm:min-w-[29rem] sm:min-h-[26rem] grid grid-rows-2 grid-cols-2">
+    <div class="sm:min-w-[29rem] gap-2 sm:min-h-[26rem] grid grid-rows-2 grid-cols-2">
       <ImageChangeFileInput :outline="$route.path.includes('admin')" name="about-gallery-1" />
       <div class="row-span-2 my-auto">
         <ImageChangeFileInput :outline="$route.path.includes('admin')" name="about-gallery-3" />

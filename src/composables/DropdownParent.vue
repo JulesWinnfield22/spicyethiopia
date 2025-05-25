@@ -19,7 +19,7 @@ const setRef = inject('setRef', () => {});
 
 <template>
 	<div :ref="setRef">
-		<ul class="__d_shadow max-w-max bg-white border border-gray rounded flex flex-col gap-2 z-50 p-2">
+		<ul class="__d_shadow max-w-max bg-white border border-gray-300 rounded-lg flex flex-col gap-2 z-50 p-2">
 			<template v-if="items && items.length > 0">
 				<li v-ripple @click="item.action" v-for="(item, index) in items" :key="index" class="w-full flex rounded items-center h-8 px-1.5 hover:bg-gray-100 cursor-pointer">
 					<!-- Render custom component if provided -->

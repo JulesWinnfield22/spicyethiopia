@@ -52,7 +52,7 @@
               <p class="mb-4 text-[#7E7E7E]">Email</p>
               <input type="email" placeholder="Enter your email" class="w-full h-[52px] border border-gray-300 px-4 py-2 rounded-md" />
             </div>
-            
+
           </div>
         </div>
 
@@ -83,7 +83,7 @@
               <p class="mb-4 text-[#7E7E7E]">Country</p>
               <input type="text" placeholder="Select Country" class="w-full h-[52px] border border-gray-300 px-4 py-2 rounded-md" />
             </div>
-            
+
           </div>
         </div>
 
@@ -125,34 +125,16 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+<script setup lang="ts">
 import { useRouter } from 'vue-router';
+import { useCartStore } from '@/stores/cartStore';
 
-export default defineComponent({
-  setup() {
-    const router = useRouter();
-    const total = ref(0);
+const router = useRouter();
+const cartStore = useCartStore();
 
-    const loadCartTotal = () => {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      total.value = cart.reduce((sum: number, item: any) => sum + item.price * item.quantity, 0);
-    };
-
-    const goToPayment = () => {
-      router.push('/payment');
-    };
-
-    onMounted(() => {
-      loadCartTotal();
-    });
-
-    return {
-      total,
-      goToPayment,
-    };
-  },
-});
+const goToPayment = () => {
+  router.push('/payment');
+};
 </script>
 
 <style scoped>

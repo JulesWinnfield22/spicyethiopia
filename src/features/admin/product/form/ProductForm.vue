@@ -14,7 +14,6 @@ const props = defineProps({
   },
   onSubmit: {
     type: Function as PropType<(values: Product) => void>,
-    required: true,
   },
 });
 

@@ -73,4 +73,12 @@ export default [
 		group: 'settings',
 		skip: false,
 	},
+	{
+		path: '/admin/discount',
+		name: 'Discount',
+		icon: icons.discount,
+		permission: [''],
+		group: 'settings',
+		skip: false,
+	},
 ]

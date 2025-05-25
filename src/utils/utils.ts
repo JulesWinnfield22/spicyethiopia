@@ -2,6 +2,7 @@ import type { AsyncResponse } from "@/interface";
 import { addToast } from "@/toast";
 import { jwtDecode } from "jwt-decode";
 
+export const DISCOUNT_STATUS = ["ACTIVE", "INACTIVE"];
 export const staticRoute = import.meta.env?.v_STATIC_FILE_URI;
 export const weightUnit = ["g", "kg", "ml", "l"];
 
@@ -9,6 +10,22 @@ export function* idGenerator() {
   let id = 1;
   while (true) {
     yield `generated_id_${id++}`;
+  }
+}
+
+export function dateFormat(date?: (Date | string)) {
+  if(!date) return ''
+  if(typeof date == 'string') {
+    let d = new Date(date)
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  } else if(date instanceof Date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }
 

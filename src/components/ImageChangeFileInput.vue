@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useApiRequest } from "@/composables/useApiRequest";
 import { getImage } from "@/features/admin/api/staticApi";
-import { ref, type PropType } from "vue";
+import { ref, type PropType, computed } from "vue";
 import InputParent from "./new_form_builder/InputParent.vue";
 import { Form, Input } from "./new_form_elements";
 import { getObjUrl, staticRoute, toasted, toFormData } from "@/utils/utils";
@@ -9,7 +9,6 @@ import icons from "@/utils/icons";
 import InputError from "./new_form_elements/InputError.vue";
 import Button from "./Button.vue";
 import { getContent, setImage } from "@/features/admin/api/contentApi";
-import { computed } from "@vue/reactivity";
 import { useRoute } from "vue-router";
 
 const props = defineProps({
@@ -29,6 +28,14 @@ const props = defineProps({
   attributes: {
     type: Object,
   },
+  objectFit: {
+    type: String as PropType<'cover' | 'contain' | 'fill' | 'none' | 'scale-down'>,
+    default: 'cover'
+  },
+  maxFileSize: {
+    type: String,
+    default: '5mb'
+  }
 });
 
 const route = useRoute();
@@ -37,6 +44,7 @@ const edit = route.path.includes("admin");
 const image = ref<File | null>();
 const contentReq = useApiRequest();
 const imageReq = useApiRequest();
+const fileError = ref<string | null>(null);
 
 if (props.name) {
   contentReq.send(
@@ -59,13 +67,40 @@ if (props.name) {
   );
 }
 
+function validateFileSize(file: File): boolean {
+  const sizeMatch = props.maxFileSize.match(/(\d+)(mb|kb)/i);
+  if (!sizeMatch) return true;
+  
+  const size = parseInt(sizeMatch[1]);
+  const unit = sizeMatch[2].toLowerCase();
+  
+  const fileSizeKB = file.size / 1024;
+  const fileSizeMB = fileSizeKB / 1024;
+  
+  if (unit === 'kb' && fileSizeKB > size) {
+    fileError.value = `File size exceeds ${size}KB`;
+    return false;
+  }
+  
+  if (unit === 'mb' && fileSizeMB > size) {
+    fileError.value = `File size exceeds ${size}MB`;
+    return false;
+  }
+  
+  fileError.value = null;
+  return true;
+}
+
 function selected(ev: Event) {
   const target = ev.target as HTMLInputElement;
-  const name = target?.files?.[0]?.name;
-  console.log(image.value, "val");
-  if (name) {
-    console.log(image.value);
-    image.value = target?.files?.[0] || new File([], "");
+  const file = target?.files?.[0];
+  
+  if (file) {
+    if (validateFileSize(file)) {
+      image.value = file;
+    } else {
+      target.value = '';
+    }
   }
 }
 
@@ -86,6 +121,17 @@ const label = ref();
 const pending = computed(
   () => contentReq.pending.value || imageReq.pending.value
 );
+
+const imageStyles = computed(() => {
+  return {
+    maxHeight: props.height || 'auto',
+    height: props.height || 'auto',
+    maxWidth: '100%',
+    width: props.width || '100%',
+    objectFit: props.objectFit,
+    objectOrigin: 'lrft'
+  };
+});
 </script>
 
 <template>
@@ -102,6 +148,7 @@ const pending = computed(
     <Form
       :style="{
         minHeight: height,
+        width: width || 'auto'
       }"
       v-slot="{ submit }"
       :class="[outline && 'border p-2']"
@@ -118,15 +165,17 @@ const pending = computed(
       >
         <div class="hidden absolute col-span-2" :ref="setRef"></div>
         <div
+          :class="[(pending || edit || !image) && 'bg-gray']"
           class="relative min-h-32 flex flex-col gap-1 overflow-hidden col-span-2"
         >
           <div
             :style="{
               height,
+              width: width || '100%'
             }"
             v-if="image"
             :class="[image ? 'z-10' : '-z-10']"
-            class="group absoli min-h-32 overflow-hidden relative z-10"
+            class="group min-h-32 overflow-hidden relative z-10"
           >
             <div
               v-if="edit"
@@ -148,32 +197,41 @@ const pending = computed(
               </div>
             </div>
             <img
+              :style="imageStyles"
               class="max-w-full"
               :src="`${staticRoute}/${contentReq.response.value?.content}`"
+              :alt="contentReq.response.value?.alt || 'Uploaded image'"
             />
           </div>
           <label
+            v-if="edit"
             :style="{
               height,
+              width: width || '100%'
             }"
             ref="label"
             :class="[outline && 'border bg-gray', image && '-z-10 absolute']"
-            class="border-gray-300 mni-h-32 rounded-md h-full w-full block"
+            class="border-gray-300 min-h-32 rounded-md h-full w-full block"
           >
             <div class="grid place-items-center h-full w-full">
-              <i
-                class="*:min-w-[3rem] *:h-[5rem] *:min-h-[3rem] *:w-[5rem] *:text-dark"
-                v-html="icons.upload"
-              />
+              <div v-if="edit" class="flex flex-col items-center">
+                <i
+                  class="*:min-w-[3rem] *:h-[5rem] *:min-h-[3rem] *:w-[5rem] *:text-dark"
+                  v-html="icons.upload"
+                />
+                <span class="text-sm text-gray-500 mt-2">Click to upload image</span>
+                <span v-if="maxFileSize" class="text-xs text-gray-400">Max size: {{ maxFileSize }}</span>
+              </div>
             </div>
             <input
               :key="image ? image.name : 'image'"
               @change="selected"
               type="file"
+              accept="image/*"
               class="hidden"
             />
           </label>
-          <InputError :error="error" />
+          <InputError :error="error || fileError" />
         </div>
       </InputParent>
       <Input
@@ -189,16 +247,10 @@ const pending = computed(
         v-if="edit"
         class="mt-auto col-span-2 flex relative isolate rounded-md"
       >
-        <div
-          class="truncate bg-gradient-to-r from-red-400/10 to-blue-300/10 absolute flex items-center justify-center font-bold text-sm text-center inset-0 -z-10"
-        >
-          fsdjjfllllllllllllllllllllllllllllllllllll
-          fsdjjfllllllllllllllllllllllllllllllllllll
-        </div>
         <div class="flex w-full backdrop-blur-2xl items-center justify-end p-2">
           <div class="flex gap-2">
-            <Button type="secondary" @click.prevent="submit(sendImage)">
-              Change
+            <Button type="secondary" @click.prevent="submit(sendImage)" :disabled="req.pending.value">
+              {{ req.pending.value ? 'Saving...' : 'Change' }}
             </Button>
           </div>
         </div>
@@ -206,3 +258,15 @@ const pending = computed(
     </Form>
   </div>
 </template>
+
+<style scoped>
+.group:hover .group-hover\:flex {
+  display: flex;
+}
+
+@media (max-width: 640px) {
+  .@max-3xl\:grid-cols-1 {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

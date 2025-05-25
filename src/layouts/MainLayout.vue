@@ -1,37 +1,17 @@
 <script setup lang="ts">
 import logo from "@/assets/img/spicylogo.png";
-import { RouterLink, useRoute, useRouter } from "vue-router";
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { RouterLink, useRoute } from "vue-router";
 import icons from "@/utils/icons";
 import Footer from "@/components/Footer.vue";
+import { useCartStore } from "@/stores/cartStore";
+import { openModal } from "@customizer/modal-x";
 
 const route = useRoute();
-const router = useRouter();
+const cartStore = useCartStore();
 
 const activeStyle =
   "font-weight: bold; text-decoration: underline; color: white;";
 const defaultStyle = "text-decoration: none; color: white;";
-
-const cartCount = ref(0);
-
-const updateCartCount = () => {
-  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-  cartCount.value = cart.reduce(
-    (total: number, item: any) => total + item.quantity,
-    0
-  ); // ← this is key
-};
-
-onMounted(() => {
-  updateCartCount();
-  window.addEventListener("storage", updateCartCount);
-  window.addEventListener("cart-updated", updateCartCount); // Custom event
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("storage", updateCartCount);
-  window.removeEventListener("cart-updated", updateCartCount);
-});
 </script>
 <template>
   <div>
@@ -78,13 +58,18 @@ onBeforeUnmount(() => {
       </div>
       <div class="flex items-center gap-6">
         <RouterLink
-          class="bg-white px-4 py-2 rounded-full max-h-12 ml-auto flex items-center gap-2 flex-nowrap"
+          class="bg-white relative px-3 py-1 rounded-full max-h-12 ml-auto flex items-center gap-2 flex-nowrap"
           to="/cart"
         >
           <i v-html="icons.cart" />
-          <span class="hidden md:inline truncate">Cart ({{ cartCount }})</span>
+          <span
+            class="absolute sm:static -top-2 p-1 text-xs rounded-full -right-2 shadow-2xl text-white sm:text-dark bg-red-500 sm:bg-transparent md:inline truncate"
+          >
+            <span class="hidden sm:inline">Cart</span>
+            ({{ cartStore.count }})</span
+          >
         </RouterLink>
-        <button class="md:hidden siez-8 grid place-items-center">
+        <button @click="openModal('Menu')" class="md:hidden siez-8 grid place-items-center">
           <i v-html="icons.menu" />
         </button>
       </div>
@@ -97,7 +82,7 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-  .__nav .router-link-exact-active {
-    font-weight: 700;
-  }
+.__nav .router-link-exact-active {
+  font-weight: 700;
+}
 </style>

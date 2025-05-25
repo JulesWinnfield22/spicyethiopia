@@ -1,15 +1,16 @@
 function arrayLength(value, args, formId, message) {
-  if(!Array.isArray(value) || (Array.isArray(value) && value.length == 0)) return [false, 'this field is requried']
-  if(!value.every(el => el.length > 0)){
-    return [false, 'description and every item must be filled']
+  if (!Array.isArray(value) || (Array.isArray(value) && value.length == 0))
+    return [false, "this field is requried"];
+  if (!value.every((el) => el.length > 0)) {
+    return [false, "description and every item must be filled"];
   }
 
-  return [true]
+  return [true];
 }
 
 function serviceRequired(value) {
-  if(value.length == 0) return [false, 'add at least one service']
-  return [true]
+  if (value.length == 0) return [false, "add at least one service"];
+  return [true];
 }
 
 function calculateAge(dateOfBirth) {
@@ -73,7 +74,7 @@ function fileSize(file, maxSize, __, message) {
 
 function max(value, maxValue = 0, _, message) {
   if (value.length < maxValue.args) return [true];
-  
+
   return [false, message || `must be less than ${maxValue?.args}`];
 }
 
@@ -90,7 +91,10 @@ function exactly(value, maxValue = 0, _, message) {
 }
 
 function minmax(value, minMaxValue, _, message) {
-  if (value.length >= minMaxValue?.args?.[0] && value.length < minMaxValue?.args?.[1])
+  if (
+    value.length >= minMaxValue?.args?.[0] &&
+    value.length < minMaxValue?.args?.[1]
+  )
     return [true];
 
   return [
@@ -217,9 +221,12 @@ function num(value, limit, _, message) {
 }
 
 function num_minmax(value, limit, _, message) {
-  const val = parseFloat(value)
-  if(val >= limit.args[0] && val <= limit.args?.[1]) return [true]
-  return [false, limit?.message || `must be between ${limit.args[0]} and ${limit.args[1]}`];
+  const val = parseFloat(value);
+  if (val >= limit.args[0] && val <= limit.args?.[1]) return [true];
+  return [
+    false,
+    limit?.message || `must be between ${limit.args[0]} and ${limit.args[1]}`,
+  ];
 }
 
 function phone(value, limit, _, message) {
@@ -262,7 +269,6 @@ function num_min(input, limit, _, message) {
 }
 
 function num_max(input, limit, _, message) {
-
   if (parseFloat(`${input}`) <= limit) return [true];
 
   return [false, message || `The required amount is not available`];
@@ -296,11 +302,24 @@ function isTrue(value, val = false, _, message) {
   return val == value ? [true] : [false, message || "this need to be true"];
 }
 
+function dateAfter(value, targetDate, formId, message) {
+  const targetDateValue = document.querySelector(`#${formId}`)?.[
+    targetDate?.args
+  ];
+
+  if (new Date(value) > new Date(targetDateValue?.value)) return [true];
+
+  return [
+    false,
+    message || `Date must be after ${targetDate.args || targetDate}`,
+  ];
+}
+
 function greaterThanToday(value) {
   var date = new Date(value);
   var now = new Date();
   if (date > now) return [true];
-  return [false, "Must be latter that today"];
+  return [false, "Must be latter than today"];
 }
 
 function addBeneficiaries(value, values = [], _, message) {
@@ -348,13 +367,14 @@ function requiredMultipleSelect(value, _, __, message) {
 const added = {};
 
 function price(value, args, formId, message) {
-  const regex = /^(?!0)\d+(\.\d{1,2})?$/
-  if(regex.test(value)) return [true]
-  return [false, 'not a valid price']
+  const regex = /^(?!0)\d+(\.\d{1,2})?$/;
+  if (regex.test(value)) return [true];
+  return [false, "not a valid price"];
 }
 
 const common = {
   alpha,
+  dateAfter,
   max,
   arrayLength,
   min,
