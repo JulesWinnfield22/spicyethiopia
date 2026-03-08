@@ -1,0 +1,183 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap");
+@import "tailwindcss";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+
+* {
+  box-sizing: border-box !important;
+}
+
+@theme {
+  --color-primary: rgb(255, 0, 0);
+  --dark: 17 17 17;
+  --color-dark: rgba(17, 17, 17, 1);
+  --color-gray: rgba(242, 243, 246, 1);
+  --color-gray-2: rgba(208, 213, 221, 1);
+  --color-base-clr: #fff;
+  --color-base-clr: #faf9f6;
+  --color-text-clr: rgba(29, 28, 27, 1);
+  --font-dm-sans: "DM Sans", sans-serif;
+  --font-dm-serif: "DM Serif Display", serif;
+  --font-cursive: "Dancing Script", cursive;
+
+  --scrollbar-width: 4px;
+  --scrollbar-track: rgba(0, 0, 0, 0.05);
+  --scrollbar-thumb: rgba(100, 100, 100, 0.5);
+  --scrollbar-thumb-hover: rgba(100, 100, 100, 0.7);
+}
+
+@theme dark {
+  --color-primary: rgb(255, 0, 0);
+  --color-dark: rgba(17, 17, 17, 1);
+  --color-gray: rgba(242, 243, 246, 1);
+
+  --scrollbar-track: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb: rgba(150, 150, 150, 0.6);
+  --scrollbar-thumb-hover: rgba(150, 150, 150, 0.8);
+}
+
+@utility sys-focus {
+  box-shadow: 0 0 0 1px var(--color-dark);
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  min-height: 100%;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+button {
+  cursor: pointer;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  overflow: auto;
+  color: var(--color-text-clr);
+  font-family: var(--font-dm-sans);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-size: 14px;
+  font-style: normal;
+  background-color: #faf9f6;
+  overflow-x: hidden;
+}
+
+/* .thin-scrollbar {
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+} */
+
+/* High contrast scrollbar for white backgrounds */
+.high-contrast-scrollbar {
+  overflow: auto;
+
+  /* For WebKit browsers */
+  &::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(80, 80, 80, 0.6);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(80, 80, 80, 0.8);
+  }
+
+  /* For Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(80, 80, 80, 0.6) rgba(0, 0, 0, 0.05);
+}
+
+/* RIpple aEffect */
+
+.__ripple {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.__ripple .__ripple_child {
+  z-index: -1;
+  position: absolute;
+  width: 0px;
+  height: 0px;
+  background-color: #ddd;
+  filter: contrast(0.4);
+  border-radius: 99999px;
+  transform: translate3d(-50%, -50%, 0);
+  pointer-events: none;
+}
+
+.__ripple_animation {
+  top: var(--y);
+  left: var(--x);
+  animation: ripple 0.4s ease-out;
+}
+
+@keyframes ripple {
+  100% {
+    width: var(--btnWidth);
+    height: var(--btnWidth);
+    opacity: 0;
+  }
+}

@@ -1,0 +1,33 @@
+# Nuxt dev/build outputs
+.output
+.nuxt
+# Node modules
+node_modules
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# OS files
+.DS_Store
+Thumbs.db
+# Environment variables
+.env
+.env.*
+!.env.example
+# IDE files
+.vscode
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# Cypress/Playwright
+/cypress/videos
+/cypress/screenshots
+/playwright-report
+/test-results
+# Local netlify folder
+.netlify
