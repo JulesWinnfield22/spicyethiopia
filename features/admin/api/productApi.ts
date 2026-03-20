@@ -2,8 +2,6 @@ import type { AsyncResponse, Query } from "~/interface";
 import ApiService from "~/service/ApiService";
 import type { Product } from "../store/productsStore";
 
-const api = new ApiService();
-
 const path = "/products";
 
 /**
@@ -11,12 +9,14 @@ const path = "/products";
  * @returns Promise with array of products
  */
 export function getProducts(query: Query) {
+  const api = useApiService();
   return api.get<Product[]>(`${path}/all`, {
     params: query,
   });
 }
 
 export function getProductById(id: string) {
+  const api = useApiService();
   return api.get<Product>(`${path}/${id}`);
 }
 
@@ -26,6 +26,7 @@ export function getProductById(id: string) {
  * @returns Promise with product data
  */
 export function getProductBySlug(slug: string) {
+  const api = useApiService();
   return api.get<Product>(`${path}/slug/${slug}`);
 }
 
@@ -35,6 +36,7 @@ export function getProductBySlug(slug: string) {
  * @returns Promise with created product data
  */
 export function createProduct(productData: FormData) {
+  const api = useApiService();
   return api.addAuthenticationHeader().post<Product>(`${path}`, productData, {
     headers: {
       "Content-Type": "multipart/form-data",
@@ -49,6 +51,7 @@ export function createProduct(productData: FormData) {
  * @returns Promise with updated product data
  */
 export function updateProduct(id: string, productData: FormData) {
+  const api = useApiService();
   return api
     .addAuthenticationHeader()
     .put<Product, FormData>(`${path}/${id}`, productData, {
@@ -64,6 +67,7 @@ export function updateProduct(id: string, productData: FormData) {
  * @returns Promise with deletion status
  */
 export function deleteProduct(id: string) {
+  const api = useApiService();
   return api.delete(`${path}/${id}`);
 }
 
@@ -74,15 +78,18 @@ export function deleteProduct(id: string) {
  * @returns Promise with updated product data
  */
 export function updateProductStatus(id: string, status: string) {
+  const api = useApiService();
   return api.patch<Product, { status: string }>(`${path}/${id}/status`, {
     status,
   });
 }
 
 export function getTopDeals() {
+  const api = useApiService();
   return api.get<Product[]>(`${path}/top-deals`);
 }
 
 export function getDealsOfTheMonth() {
+  const api = useApiService();
   return api.get<Product[]>(`${path}/deals-of-the-month`);
 }

@@ -4,6 +4,9 @@ import { useCartStore } from "~/stores/cartStore";
 import { staticRoute, slugify } from "~/utils/utils";
 import { saveFlipState } from "~/utils/flipStore";
 import { Flip } from "gsap/Flip";
+import { useTransitionHelper } from "~/composables/useTransition";
+
+const { navigateWithTransition } = useTransitionHelper();
 
 const props = defineProps<{
   spice: any;
@@ -30,10 +33,10 @@ const handleNavigate = (id: string) => {
           product: spice.id,
           image: spice.images?.[0] as string,
           title: spice.title,
+          description: spice.description,
           price: Number(spice.discountedPrice ?? spice.price),
           size: Number(spice.quantity),
           quantity: 1,
-          description: spice.description,
         })
       "
       :class="[
@@ -43,10 +46,12 @@ const handleNavigate = (id: string) => {
     >
       <i v-html="icons.cart" class="*:size-4" />
     </button>
-    <NuxtLink
-      @click="handleNavigate(spice.id)"
-      :to="`/spice/${slugify(spice.title)}`"
-      class="block flex-1"
+    <div
+      @click.prevent="
+        handleNavigate(spice.id);
+        navigateWithTransition(`/spice/${slugify(spice.title)}`, spice.title);
+      "
+      class="block flex-1 cursor-pointer"
     >
       <div class="overflow-hidden rounded-lg">
         <img
@@ -92,10 +97,10 @@ const handleNavigate = (id: string) => {
                   product: spice.id,
                   image: spice.images?.[0] as string,
                   title: spice.title,
+                  description: spice.description,
                   price: Number(spice.discountedPrice ?? spice.price),
                   size: Number(spice.quantity),
                   quantity: 1,
-                  description: spice.description,
                 })
               "
               class="bg-black hover:bg-neutral-800 text-white w-full h-9 px-4 cursor-pointer rounded-full flex justify-center items-center gap-2 transition-all active:scale-95"
@@ -133,6 +138,6 @@ const handleNavigate = (id: string) => {
           </div>
         </div>
       </div>
-    </NuxtLink>
+    </div>
   </div>
 </template>

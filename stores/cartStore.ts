@@ -1,14 +1,15 @@
 import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
+import { useCookie } from "#app";
 
 export interface CartItem {
   product: string;
   title: string;
+  description: string;
   image: string;
   price: number;
   quantity: number;
   size: number;
-  description: string;
 }
 
 export type PersonalInfo = {
@@ -32,39 +33,30 @@ type Info = {
   customerInfo?: PersonalInfo;
   shippingAddress?: ShippingInfo;
 };
+
 export const useCartStore = defineStore("cart", () => {
-  const items = ref<CartItem[]>([]);
-  const info = ref<Info>({
-    customerInfo: {
-      customerEmail: "",
-      phoneNumber: "",
-      notes: "",
-    },
-    shippingAddress: {
-      streetAddress: "",
-      apartment: "",
-      city: "",
-      province: "",
-      postalCode: "",
-      country: "",
-    },
+  // We use useCookie WITHOUT a default to prevent overwriting existing cookies during SSR/Hydration.
+  const items = useCookie<CartItem[]>("cart", {
+    maxAge: 60 * 60 * 24 * 7, // 1 week
+    watch: true,
+    path: "/",
+    sameSite: "lax",
+    secure: false,
   });
 
-  const initializeCart = () => {
-    if (process.client) {
-      const storedCart = localStorage.getItem("cart");
-      if (storedCart) {
-        items.value = JSON.parse(storedCart);
-      }
-    }
-  };
+  const info = useCookie<Info>("cart-info", {
+    maxAge: 60 * 60 * 24 * 7, // 1 week
+    watch: true,
+    path: "/",
+    sameSite: "lax",
+    secure: false,
+  });
 
+  // Watch for changes to items to dispatch updates to other components if needed
   watch(
-    items,
-    (newItems) => {
+    () => items.value,
+    () => {
       if (process.client) {
-        localStorage.setItem("cart", JSON.stringify(newItems));
-        // Dispatch custom event for components that listen to cart updates
         window.dispatchEvent(new Event("cart-updated"));
       }
     },
@@ -72,11 +64,11 @@ export const useCartStore = defineStore("cart", () => {
   );
 
   const count = computed(() => {
-    return items.value.length;
+    return items.value?.length || 0;
   });
 
   const total = computed(() => {
-    return items.value.reduce(
+    return (items.value || []).reduce(
       (sum, item) => sum + item.price * item.quantity,
       0,
     );
@@ -85,45 +77,52 @@ export const useCartStore = defineStore("cart", () => {
   const addItem = (
     item: Omit<CartItem, "quantity"> & { quantity?: number },
   ) => {
-    const existingItemIndex = items.value.findIndex(
+    const currentItems = [...(items.value || [])];
+    const existingItemIndex = currentItems.findIndex(
       (i) => i.product === item.product && i.size === item.size,
     );
 
     if (existingItemIndex !== -1) {
-      items.value[existingItemIndex].quantity += item.quantity || 1;
+      currentItems[existingItemIndex].quantity += item.quantity || 1;
     } else {
-      items.value.push({
+      currentItems.push({
         ...item,
         quantity: item.quantity || 1,
       });
     }
+    items.value = currentItems;
   };
 
   const thisItem = computed(() => {
-    return (id: string) => items.value.find((el) => el.product == id);
+    return (id: string) => (items.value || []).find((el) => el.product == id);
   });
 
   const increment = (id: string) => {
-    let idx = items.value.findIndex((el) => el.product == id);
-    console.log(idx);
-    if (idx > -1 && items.value[idx].quantity + 1 <= items.value[idx].size) {
-      items.value[idx].quantity += 1;
+    const currentItems = [...(items.value || [])];
+    let idx = currentItems.findIndex((el) => el.product == id);
+    if (idx > -1 && currentItems[idx].quantity + 1 <= currentItems[idx].size) {
+      currentItems[idx].quantity += 1;
+      items.value = currentItems;
     }
   };
 
   const decrement = (id: string) => {
-    let idx = items.value.findIndex((el) => el.product == id);
-    if (idx > -1 && items.value[idx].quantity - 1 >= 0) {
-      items.value[idx].quantity -= 1;
+    const currentItems = [...(items.value || [])];
+    let idx = currentItems.findIndex((el) => el.product == id);
+    if (idx > -1 && currentItems[idx].quantity - 1 >= 0) {
+      currentItems[idx].quantity -= 1;
+      items.value = currentItems;
     } else {
       removeItem(id);
     }
   };
 
   const removeItem = (id: string) => {
-    let idx = items.value.findIndex((el) => el.product == id);
+    const currentItems = [...(items.value || [])];
+    let idx = currentItems.findIndex((el) => el.product == id);
     if (idx > -1) {
-      items.value.splice(idx, 1);
+      currentItems.splice(idx, 1);
+      items.value = currentItems;
     }
   };
 
@@ -141,11 +140,27 @@ export const useCartStore = defineStore("cart", () => {
     items.value = [];
   };
 
-  // Initialize cart from localStorage
-  initializeCart();
+  const safeInfo = computed(() => {
+    return {
+      customerInfo: info.value?.customerInfo || {
+        customerEmail: "",
+        phoneNumber: "",
+        notes: "",
+      },
+      shippingAddress: info.value?.shippingAddress || {
+        streetAddress: "",
+        apartment: "",
+        city: "",
+        province: "",
+        postalCode: "",
+        country: "",
+      },
+    };
+  });
 
   return {
-    items,
+    items: computed(() => items.value || []),
+    info: safeInfo,
     count,
     total,
     thisItem,
@@ -155,6 +170,5 @@ export const useCartStore = defineStore("cart", () => {
     decrement,
     removeItem,
     clearCart,
-    info,
   };
 });

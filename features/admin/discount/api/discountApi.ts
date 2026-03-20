@@ -1,15 +1,14 @@
 import type { Query } from "~/interface";
 import ApiService from "~/service/ApiService";
 
-const path = '/discounts'
-
-const api = new ApiService()
+const path = "/discounts";
 
 /**
  * Get all discounts
  * @returns Promise with discount data
  */
 export function getAllDiscounts(params?: Query) {
+  const api = useApiService();
   return api.addAuthenticationHeader().get(`${path}`, { params });
 }
 
@@ -19,6 +18,7 @@ export function getAllDiscounts(params?: Query) {
  * @returns Promise with created discount data
  */
 export function createDiscount(discountData: any) {
+  const api = useApiService();
   return api.addAuthenticationHeader().put(`${path}`, discountData);
 }
 
@@ -29,6 +29,7 @@ export function createDiscount(discountData: any) {
  * @returns Promise with updated discount data
  */
 export function updateDiscount(id: string, discountData: any) {
+  const api = useApiService();
   return api.addAuthenticationHeader().put(`${path}/${id}`, discountData);
 }
 
@@ -38,6 +39,7 @@ export function updateDiscount(id: string, discountData: any) {
  * @returns Promise with success status
  */
 export function deleteDiscount(id: string) {
+  const api = useApiService();
   return api.addAuthenticationHeader().delete(`${path}/${id}`);
 }
 
@@ -48,7 +50,10 @@ export function deleteDiscount(id: string) {
  * @returns Promise with created product discount data
  */
 export function addProductDiscount(productId: string, discountData: any) {
-  return api.addAuthenticationHeader().post(`${path}/product/${productId}`, discountData);
+  const api = useApiService();
+  return api
+    .addAuthenticationHeader()
+    .post(`${path}/product/${productId}`, discountData);
 }
 
 /**
@@ -57,6 +62,7 @@ export function addProductDiscount(productId: string, discountData: any) {
  * @returns Promise with product discount data
  */
 export function getProductDiscount(productId: string) {
+  const api = useApiService();
   return api.addAuthenticationHeader().get(`${path}/${productId}`);
 }
 
@@ -67,7 +73,10 @@ export function getProductDiscount(productId: string) {
  * @returns Promise with updated product discount data
  */
 export function updateProductDiscount(productId: string, discountData: any) {
-  return api.addAuthenticationHeader().put(`${path}/${productId}`, discountData);
+  const api = useApiService();
+  return api
+    .addAuthenticationHeader()
+    .put(`${path}/${productId}`, discountData);
 }
 
 /**
@@ -76,5 +85,6 @@ export function updateProductDiscount(productId: string, discountData: any) {
  * @returns Promise with success status
  */
 export function removeProductDiscount(productId: string) {
+  const api = useApiService();
   return api.addAuthenticationHeader().delete(`${path}/product/${productId}`);
 }

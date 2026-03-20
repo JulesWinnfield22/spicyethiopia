@@ -45,7 +45,7 @@ const PRODUCT_STATUS = ["Available", "Out of Stock", "Hidden", "All"];
       <Search v-model="search.value" />
     </div>
     <Table
-      :pending="pending.value"
+      :pending="pending"
       :headers="{
         head: [
           'Product Image',

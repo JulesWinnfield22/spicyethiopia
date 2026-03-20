@@ -28,7 +28,7 @@ defineExpose({
       <div class="col-span-2 flex justify-between items-center">
         <span class="font-bold text-xs md:text-lg">Items in cart</span>
         <span class="font-bold text-xs md:text-lg"
-          >{{ cartStore.items.length }} items</span
+          >{{ cartStore.items?.length || 0 }} items</span
         >
       </div>
       <div
@@ -45,10 +45,13 @@ defineExpose({
         <div
           class="flex flex-col max-w-[calc(100%-11rem)] gap-1 md:gap-4 justify-between flex-1"
         >
-          <div class="flex justify-baseline items-center">
-            <span class="md:text-2xl truncate font-normal">{{
+          <div class="flex flex-col gap-1">
+            <span class="md:text-2xl truncate font-normal leading-tight">{{
               item.title
             }}</span>
+            <p class="text-xs md:text-sm text-gray-500 line-clamp-1">
+              {{ item.description }}
+            </p>
           </div>
           <span
             class="block font-bold md:font-semibold border-gray-2 text-xs md:text-xl border-b pb-2"

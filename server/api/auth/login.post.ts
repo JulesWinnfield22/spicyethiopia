@@ -14,7 +14,6 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    console.log(response);
     if (response) {
       const { token, ...fullUser } = response;
 
@@ -25,6 +24,7 @@ export default defineEventHandler(async (event) => {
         roleName: fullUser.roleName,
         firstName: fullUser.firstName,
         fathersName: fullUser.fathersName,
+        token: token, // Include token for client-side Authorization header
         roles:
           fullUser.roles?.map((r: any) => ({ id: r.id, name: r.name })) || [],
       };

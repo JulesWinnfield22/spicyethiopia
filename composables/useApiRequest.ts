@@ -37,13 +37,24 @@ export function removeCache(key: string) {
   cacheStore.delete(key);
 }
 
+export function clearAllApiCache() {
+  cacheStore.clear();
+}
+
+import { useNuxtApp, callWithNuxt } from "#app";
+
 export function useApiRequest(provideValues = true, id?: string) {
+  const nuxtApp = useNuxtApp();
   // Use Nuxt's useState if an ID is provided to allow hydration, otherwise use a local ref
   const response = id ? useState<any>(id) : ref<any>();
-  const pending = ref(false);
-  const error = ref("");
+  const pending = id
+    ? useState<boolean>(`${id}_pending`, () => false)
+    : ref(false);
+  const error = id ? useState<string>(`${id}_error`, () => "") : ref("");
+  const success = id
+    ? useState<boolean>(`${id}_success`, () => false)
+    : ref(false);
   const dirty = ref(false);
-  const success = ref(false);
 
   if (provideValues) {
     provide("pending", pending);
@@ -80,22 +91,29 @@ export function useApiRequest(provideValues = true, id?: string) {
 
     try {
       dirty.value = true;
-      request().then((res: any) => {
-        if (beforeResolve) cb(res);
+      callWithNuxt(nuxtApp, () => request())
+        .then((res: any) => {
+          if (beforeResolve) cb(res);
 
-        pending.value = false;
-        if (!(typeof cb == "function")) return;
+          pending.value = false;
+          if (!(typeof cb == "function")) return;
 
-        response.value = res?.data ?? res;
-        error.value = res?.error;
-        success.value = res.success;
+          response.value = res?.data ?? res;
+          error.value = res?.error;
+          success.value = res.success;
 
-        if (res.success && cacheKey) {
-          setCache(cacheKey, response.value, ttl);
-        }
+          if (res.success && cacheKey) {
+            setCache(cacheKey, response.value, ttl);
+          }
 
-        cb(res);
-      });
+          cb(res);
+        })
+        .catch((err: any) => {
+          console.error(err);
+          pending.value = false;
+          error.value = err.message;
+          success.value = false;
+        });
     } catch (err: any) {
       console.error(err);
       pending.value = false;

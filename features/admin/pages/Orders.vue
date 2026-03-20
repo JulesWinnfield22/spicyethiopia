@@ -49,6 +49,12 @@ const handleAction = (order: Order, actionText: string) => {
     alert(`Action "${actionText}" for order ${order.id}`);
   }
 };
+watch(
+  () => pagination.pending.value,
+  (val) => {
+    console.log("[Orders.vue] pagination.pending changed:", val);
+  },
+);
 </script>
 
 <template>
@@ -69,6 +75,7 @@ const handleAction = (order: Order, actionText: string) => {
     <Search v-model="pagination.search.value" />
   </div>
   <Table
+    :pending="pagination.pending.value === true"
     @row="() => {}"
     :rows="pagination.response.value || []"
     :headers="{

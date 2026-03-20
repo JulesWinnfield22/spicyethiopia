@@ -4,9 +4,19 @@ import { useApiRequest } from "~/composables/useApiRequest";
 import InputParent from "~/components/new_form_builder/InputParent.vue";
 import { getAddressAutocomplete } from "~/features/public/api/addressApi";
 import icons from "~/utils/icons";
-import { ref, onMounted, computed } from "vue";
+import { useWindowSize } from "~/composables/useWindowSize";
+import { ref, onMounted, computed, watch } from "vue";
 // @ts-ignore
 import { OnClickOutside } from "@vueuse/components";
+
+const windowSize = useWindowSize();
+const isMobile = computed(() => windowSize.value.width < 768);
+const showMobileOverlay = ref(false);
+const isMounted = ref(false);
+
+onMounted(() => {
+  isMounted.value = true;
+});
 
 const props = defineProps({
   modelValue: {
@@ -69,7 +79,8 @@ function getAddresses(ev: any) {
       },
       true,
       false,
-      { enabled: true, key: `address_autocomplete_${query}`, ttl: 3600 },
+      `address_autocomplete_${query}`,
+      3600,
     );
   }, 300);
 }
@@ -125,6 +136,26 @@ onMounted(() => {
     console.error("Failed to parse recent searches", e);
   }
 });
+
+function openMobileSearch() {
+  showMobileOverlay.value = true;
+  openDropdown.value = true;
+}
+
+function closeMobileSearch() {
+  showMobileOverlay.value = false;
+  openDropdown.value = false;
+}
+
+// Ensure overlay input is focused when opened
+const mobileInputRef = ref<HTMLInputElement | null>(null);
+watch(showMobileOverlay, (val) => {
+  if (val) {
+    setTimeout(() => {
+      mobileInputRef.value?.focus();
+    }, 100);
+  }
+});
 </script>
 
 <template>
@@ -139,7 +170,9 @@ onMounted(() => {
         class="relative focus:border-0 w-full flex h-full !overflow-visible"
         :ref="setRef"
       >
+        <!-- Desktop View -->
         <OnClickOutside
+          v-if="isMounted && !isMobile"
           class="flex-1 w-full !overflow-visible"
           @trigger="openDropdown = false"
         >
@@ -206,6 +239,151 @@ onMounted(() => {
             </template>
           </div>
         </OnClickOutside>
+
+        <!-- Mobile View (Trigger) -->
+        <div
+          v-else-if="isMounted && isMobile"
+          @click="openMobileSearch"
+          class="flex-1 w-full flex items-center cursor-pointer min-h-[44px]"
+        >
+          <span
+            class="text-sm flex-1 truncate"
+            :class="search ? 'text-black' : 'text-gray-400'"
+          >
+            {{ search || attributes?.placeholder || "Select Address" }}
+          </span>
+          <div
+            class="h-full ml-auto w-8 flex items-center justify-center text-gray-500"
+          >
+            <i v-html="icons.search" />
+          </div>
+        </div>
+
+        <!-- Mobile Search Overlay -->
+        <Teleport to="body">
+          <Transition
+            enter-active-class="transition duration-300 ease-out"
+            enter-from-class="opacity-0 translate-y-full"
+            enter-to-class="opacity-100 translate-y-0"
+            leave-active-class="transition duration-200 ease-in"
+            leave-from-class="opacity-100 translate-y-0"
+            leave-to-class="opacity-0 translate-y-full"
+          >
+            <div
+              v-if="isMobile && showMobileOverlay"
+              class="fixed inset-0 z-100 bg-white flex flex-col"
+            >
+              <!-- Header -->
+              <div
+                class="flex items-center p-4 border-b border-gray-100 gap-3 bg-white sticky top-0"
+              >
+                <button
+                  @click="closeMobileSearch"
+                  class="p-2 -ml-2 rounded-full hover:bg-gray-50"
+                >
+                  <i class="w-5 h-5 block" v-html="icons.leftArrow" />
+                </button>
+                <div
+                  class="flex-1 bg-gray-100 rounded-lg flex items-center px-3 py-1"
+                >
+                  <i class="text-gray-400 w-4 h-4 mr-2" v-html="icons.search" />
+                  <input
+                    ref="mobileInputRef"
+                    @input="getAddresses"
+                    :value="search"
+                    class="flex-1 bg-transparent py-2 text-sm outline-none"
+                    :placeholder="
+                      attributes?.placeholder || 'Search address...'
+                    "
+                    autocomplete="off"
+                  />
+                  <button
+                    v-if="search"
+                    @click="
+                      search = '';
+                      getAddresses({ target: { value: '' } });
+                    "
+                    class="p-1"
+                  >
+                    <i
+                      class="text-gray-400 w-4 h-4"
+                      v-html="icons.close || '✕'"
+                    />
+                  </button>
+                </div>
+              </div>
+
+              <!-- Results -->
+              <div class="flex-1 overflow-y-auto">
+                <div
+                  v-if="req.pending.value"
+                  class="p-8 flex justify-center items-center"
+                >
+                  <i
+                    class="animate-spin text-primary text-3xl"
+                    v-html="icons.spinner"
+                  />
+                </div>
+
+                <template v-else>
+                  <div
+                    v-if="!search && recentSearches.length > 0"
+                    class="px-4 py-3 text-xs font-bold text-gray-400 uppercase tracking-wider"
+                  >
+                    Recent Searches
+                  </div>
+                  <div
+                    v-for="(address, idx) in displayAddresses"
+                    :key="idx"
+                    @click="
+                      select(address);
+                      closeMobileSearch();
+                    "
+                    class="px-4 py-4 flex items-start gap-4 active:bg-gray-50 border-b border-gray-50"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center shrink-0"
+                    >
+                      <i class="text-gray-400" v-html="icons.location" />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate">
+                        {{
+                          address.displayName || address.address?.streetAddress
+                        }}
+                      </p>
+                      <p
+                        v-if="address.address?.city"
+                        class="text-xs text-gray-500 truncate"
+                      >
+                        {{ address.address?.city }},
+                        {{ address.address?.province }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div
+                    v-if="!displayAddresses.length && search"
+                    class="p-12 text-center"
+                  >
+                    <div
+                      class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4"
+                    >
+                      <i
+                        class="text-gray-300 transform scale-150"
+                        v-html="icons.location"
+                      />
+                    </div>
+                    <p class="text-gray-900 font-medium">No addresses found</p>
+                    <p class="text-sm text-gray-500 mt-1">
+                      Try searching for a different street or city
+                    </p>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </Transition>
+        </Teleport>
       </div>
     </InputLayout>
   </InputParent>

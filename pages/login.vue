@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import loginPhoto from "~/assets/img/login.png";
+import loginPhoto from "~/assets/img/login.webp";
 import login2 from "~/assets/img/login2.png";
 import Form from "~/components/new_form_builder/Form.vue";
 import Input from "~/components/new_form_elements/Input.vue";
@@ -35,25 +35,35 @@ const handleLogin = ({ values }: any) => {
         auth.setAuth(res.data);
         toasted(res.success, "Successfully Logged In", res.error);
         await navigateTo({ path: "admin/orders" });
+      } else {
+        toasted(false, "", res.error);
       }
     },
   );
 };
 </script>
 <template>
-  <div class="grid grid-cols-3 h-screen box-border">
-    <!-- Left Side Image -->
+  <div
+    class="grid grid-cols-1 xl:grid-cols-3 h-screen box-border overflow-hidden"
+  >
+    <!-- Left Side Image - Hidden until XL -->
     <div
-      class="col-span-2 max-h-full max-w-full bg-cover bg-center"
+      class="hidden xl:block xl:col-span-2 h-full bg-cover bg-center"
       :style="{ backgroundImage: `url(${loginPhoto})` }"
     ></div>
 
-    <!-- Right Side Form -->
-    <div class="flex flex-col p-8 items-center">
-      <div class="w-full max-w-md space-y-8">
+    <!-- Right Side Form - Full width until XL -->
+    <div
+      class="flex flex-col p-6 md:p-8 items-center justify-center bg-white overflow-y-auto w-full xl:col-span-1"
+    >
+      <div class="w-full max-w-sm lg:max-w-md space-y-6 md:space-y-8">
         <!-- Logo -->
-        <div class="flex justify-center">
-          <img :src="login2" alt="Spice Bottle" class="h-56" />
+        <div class="hidden md:flex justify-center">
+          <img
+            :src="login2"
+            alt="Spice Bottle"
+            class="h-40 md:h-56 object-contain"
+          />
         </div>
 
         <!-- Welcome Text -->
@@ -83,7 +93,7 @@ const handleLogin = ({ values }: any) => {
             validation="required|minmax-6,12"
           />
           <div
-            class="flex items-center justify-between text-sm text-gray-600 mb-8"
+            class="flex items-center justify-between text-sm text-gray-600 mb-6 md:mb-8"
           >
             <div class="flex items-center space-x-2">
               <button
@@ -115,7 +125,9 @@ const handleLogin = ({ values }: any) => {
           >
             Login
           </Button>
-          <p class="text-center text-sm text-[#666666] mt-28 font-sans">
+          <p
+            class="text-center text-sm text-[#666666] mt-12 md:mt-28 font-sans"
+          >
             Designed and Developed by
             <a href="#" class="underline hover:text-black">Encoverse</a>
           </p>

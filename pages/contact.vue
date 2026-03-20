@@ -106,7 +106,7 @@ function handleSendMessage({ values, reset }: any) {
           <div class="">
             <Button
               @click.prevent="submit(handleSendMessage)"
-              :loading="pending"
+              :pending="pending"
               class="bg-black text-white w-full font-semibold font-sans py-5 cursor-pointer rounded-md flex items-center justify-center transition duration-300 shadow-lg"
             >
               Send Message

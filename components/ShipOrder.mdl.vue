@@ -89,7 +89,7 @@ const handleShip = () => {
         </Button>
         <Button
           @click="handleShip"
-          :loading="pending"
+          :pending="pending"
           type="secondary"
           size="md"
         >

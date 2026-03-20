@@ -49,8 +49,8 @@ const edit = route.path.includes("admin");
 
 const image = ref<File | null>();
 const previewUrl = ref("");
-const contentReq = useApiRequest();
-const imageReq = useApiRequest();
+const contentReq = useApiRequest(true, "img_content_" + props.name);
+const imageReq = useApiRequest(false, "img_blob_data_" + props.name);
 const fileError = ref<string | null>(null);
 
 if (props.name) {
@@ -61,7 +61,7 @@ if (props.name) {
         imageReq.send(
           () => getImage(res.data.content),
           (imageRes) => {
-            if (imageRes.success && imageRes.data) {
+            if (process.client && imageRes.success && imageRes.data) {
               image.value = new File(
                 [imageRes.data],
                 res.data.content as string,
@@ -161,11 +161,11 @@ watch(
   image,
   (newVal) => {
     if (previewUrl.value) {
-      URL.revokeObjectURL(previewUrl.value);
+      if (process.client) URL.revokeObjectURL(previewUrl.value);
       previewUrl.value = "";
     }
     if (isFile(newVal)) {
-      previewUrl.value = URL.createObjectURL(newVal);
+      if (process.client) previewUrl.value = URL.createObjectURL(newVal);
     }
   },
   { immediate: true },
@@ -173,7 +173,7 @@ watch(
 
 onUnmounted(() => {
   if (previewUrl.value) {
-    URL.revokeObjectURL(previewUrl.value);
+    if (process.client) URL.revokeObjectURL(previewUrl.value);
   }
 });
 </script>
@@ -303,7 +303,7 @@ onUnmounted(() => {
             <Button
               type="secondary"
               @click.prevent="submit(sendImage)"
-              :loading="req.pending.value"
+              :pending="req.pending.value"
             >
               Change
             </Button>
@@ -320,7 +320,7 @@ onUnmounted(() => {
 }
 
 @media (max-width: 640px) {
-  .@max-3xl\:grid-cols-1 {
+  .\@max-3xl\:grid-cols-1 {
     grid-template-columns: 1fr;
   }
 }

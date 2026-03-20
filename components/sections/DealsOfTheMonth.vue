@@ -3,6 +3,9 @@ import { onMounted, onBeforeUnmount, ref, onUnmounted, watch } from "vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { staticRoute, slugify } from "~/utils/utils";
+import { useTransitionHelper } from "~/composables/useTransition";
+
+const { navigateWithTransition } = useTransitionHelper();
 
 const props = defineProps<{
   products: {
@@ -155,11 +158,16 @@ onUnmounted(() => {
       </div>
 
       <!-- Products -->
-      <NuxtLink
-        :to="`/spice/${slugify(product.title)}`"
+      <div
+        @click.prevent="
+          navigateWithTransition(
+            `/spice/${slugify(product.title)}`,
+            product.title,
+          )
+        "
         v-for="product in products"
         :key="product.id"
-        class="panel flex-shrink-0 w-full md:w-[400px] lg:w-[400px] h-[50vh] lg:h-[60vh] mx-0 lg:mx-4 relative group overflow-hidden rounded-3xl shadow-xl block"
+        class="panel flex-shrink-0 w-full md:w-[400px] lg:w-[400px] h-[50vh] lg:h-[60vh] mx-0 lg:mx-4 relative group overflow-hidden rounded-3xl shadow-xl block cursor-pointer"
       >
         <img
           :src="product.image || (product.images && product.images[0])"
@@ -210,7 +218,7 @@ onUnmounted(() => {
             {{ product.discount }}
           </div>
         </div>
-      </NuxtLink>
+      </div>
 
       <!-- Padding right -->
       <div class="w-20 flex-shrink-0"></div>

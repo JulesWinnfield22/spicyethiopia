@@ -22,11 +22,11 @@ const setMenuItemRef = (el: any) => {
   }
 };
 
-const close = (path?: string) => {
+const close = (path?: string, title?: string) => {
   const tl = gsap.timeline({
     onComplete: () => {
       emit("update:modelValue", false);
-      if (path) navigateWithTransition(path);
+      if (path) navigateWithTransition(path, title);
     },
   });
 
@@ -119,16 +119,21 @@ onMounted(() => {
           v-for="(item, index) in [
             { name: 'Home', path: '/' },
             { name: 'Shop', path: '/shop' },
+            // { name: 'Spices', path: '/spice' },
             { name: 'Contact', path: '/contact' },
             { name: 'About', path: '/about' },
-            // { name: 'Recipes', path: '/recipes' },
           ]"
           :key="index"
           :ref="setMenuItemRef"
           class="group flex flex-col py-2"
         >
           <button
-            @click.stop.prevent="close(item.path)"
+            @click.stop.prevent="
+              close(
+                item.path,
+                item.path === '/' ? 'Spicy Ethiopian' : item.name,
+              )
+            "
             class="inline-block text-6xl md:text-7xl shrink-0 items-start text-left font-dm-serif font-bold text-black transition-transform duration-500 group-hover:translate-x-4 leading-normal"
           >
             {{ item.name }}

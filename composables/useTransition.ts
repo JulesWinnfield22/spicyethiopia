@@ -8,8 +8,18 @@ interface TransitionOverlayInstance {
 export const useTransitionHelper = () => {
   const transitionOverlay =
     inject<Ref<TransitionOverlayInstance | null>>("transitionOverlay");
+  const transitionTitle = useState<string | null>(
+    "transitionTitle",
+    () => null,
+  );
 
-  const navigateWithTransition = async (path: string) => {
+  const navigateWithTransition = async (path: string, title?: string) => {
+    if (title) {
+      transitionTitle.value = title;
+    } else {
+      transitionTitle.value = null;
+    }
+
     if (!transitionOverlay?.value) {
       await navigateTo(path);
       return;
@@ -24,5 +34,6 @@ export const useTransitionHelper = () => {
 
   return {
     navigateWithTransition,
+    transitionTitle,
   };
 };

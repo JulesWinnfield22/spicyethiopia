@@ -1,8 +1,7 @@
 import ApiService from "~/service/ApiService";
 
-const api = new ApiService();
-
 export function getContactInfo() {
+  const api = useApiService();
   return api.get("/contact");
 }
 
@@ -12,5 +11,6 @@ export function sendMessage(data: {
   phoneNumber: string;
   message: string;
 }) {
+  const api = useApiService();
   return api.post("/messages", data);
 }

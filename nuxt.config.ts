@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     "@": "~/",
   },
   runtimeConfig: {
-    BACKEND_API_URI: process.env.NUXT_BACKEND_API_URI, // Server-only
+    BACKEND_API_URI: process.env.BACKEND_API_URL, // Server-only
     public: {
       v_API_URI: "/api/proxy", // Frontend calls the proxy
       v_STATIC_FILE_URI: process.env.NUXT_PUBLIC_V_STATIC_FILE_URI,
@@ -28,12 +28,43 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       crawlLinks: true,
-      routes: ["/", "/shop", "/about", "/contact"],
-      ignore: ["/admin"],
+      routes: ["/", "/shop", "/about", "/contact", "/login"],
+      ignore: ["/admin", "/api"],
+    },
+    async hooks({ nitro }) {
+      const apiUrl =
+        process.env.BACKEND_API_URL || "https://api.insmarket5608.com/api/v1";
+      try {
+        const response = await fetch(`${apiUrl}/products/all`);
+        const result = await response.json();
+        const slugify = (text: string) =>
+          text
+            .toString()
+            .toLowerCase()
+            .trim()
+            .replace(/\s+/g, "-")
+            .replace(/[^\w-]+/g, "")
+            .replace(/--+/g, "-");
+
+        if (result.success && Array.isArray(result.data)) {
+          const productRoutes = result.data.map(
+            (product: any) => `/spice/${slugify(product.title)}`,
+          );
+          nitro.options.prerender.routes.push(...productRoutes);
+          console.log(
+            `[nitro] Added ${productRoutes.length} product routes to prerender`,
+          );
+        }
+      } catch (e) {
+        console.error(
+          "[nitro] Error fetching product routes for prerendering:",
+          e,
+        );
+      }
     },
   },
   routeRules: {
-    "/spice/**": { prerender: true },
+    "/spice/**": { swr: true },
     "/admin/**": { ssr: false },
   },
   compatibilityDate: "2024-11-01",

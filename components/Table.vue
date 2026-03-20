@@ -201,10 +201,16 @@ watch(
   { deep: true },
 );
 
-const pending = computed(() => {
+const isLoading = computed(() => {
   return props.pending || pagination?.pending?.value;
 });
 
+watchEffect(() => {
+  console.log("[Table.vue] isLoading changed:", isLoading.value, {
+    propPending: props.pending,
+    paginationPending: pagination?.pending?.value,
+  });
+});
 const rows = computed<T[]>(() => {
   return props.rows.length
     ? props.rows
@@ -380,7 +386,7 @@ watch(
                 <slot name="bottom" :row="row as T" />
               </template>
             </GenericTableRow>
-            <tr v-if="!rows?.length && !pending">
+            <tr v-if="!rows?.length && !isLoading">
               <td :colspan="spec.head.length + 1">
                 <slot name="placeholder">
                   <div class="bg-white p-6 flex flex-col gap-2 items-center">
@@ -397,7 +403,7 @@ watch(
             </tr>
           </template>
         </slot>
-        <template v-if="pending">
+        <template v-if="isLoading">
           <component
             :cols="spec.head.length + 1"
             :key="num"

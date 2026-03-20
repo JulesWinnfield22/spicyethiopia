@@ -1,18 +1,17 @@
 import type { User, AsyncResponse, Query } from "~/interface";
 import ApiService from "~/service/ApiService";
 
-const api = new ApiService();
-
-const paths = '/users';
+const paths = "/users";
 
 /**
  * Get all users
  * @returns Promise with array of users
  */
 export function getUsers(query: Query) {
-  console.log(query)
+  const api = useApiService();
+  console.log(query);
   return api.get<User[]>(`${paths}/all`, {
-    params: query
+    params: query,
   });
 }
 
@@ -22,6 +21,7 @@ export function getUsers(query: Query) {
  * @returns Promise with user data
  */
 export function getUserById(id: string) {
+  const api = useApiService();
   return api.get<User>(`${paths}/${id}`);
 }
 
@@ -31,6 +31,7 @@ export function getUserById(id: string) {
  * @returns Promise with created user data
  */
 export function createUser(userData: Partial<User>) {
+  const api = useApiService();
   return api.post<User>(`${paths}`, userData);
 }
 
@@ -41,6 +42,7 @@ export function createUser(userData: Partial<User>) {
  * @returns Promise with updated user data
  */
 export function updateUser(id: string, userData: User) {
+  const api = useApiService();
   return api.put<User>(`${paths}/${id}`, userData);
 }
 
@@ -50,6 +52,7 @@ export function updateUser(id: string, userData: User) {
  * @returns Promise with deletion status
  */
 export function deleteUser(id: string) {
+  const api = useApiService();
   return api.delete(`${paths}/${id}`);
 }
 
@@ -58,14 +61,15 @@ export function deleteUser(id: string) {
  * @param pagination Pagination parameters
  * @returns Promise with paginated users
  */
-export function getPaginatedUsers(pagination: Pagination) {
+export function getPaginatedUsers(pagination: any) {
+  const api = useApiService();
   const { page, limit, search } = pagination;
   let url = `${paths}?page=${page}&limit=${limit}`;
-  
+
   if (search) {
     url += `&search=${encodeURIComponent(search)}`;
   }
-  
+
   return api.get<{
     data: User[];
     total: number;
@@ -81,6 +85,7 @@ export function getPaginatedUsers(pagination: Pagination) {
  * @returns Promise with updated user data
  */
 export function updateUserStatus(id: string, status: string) {
+  const api = useApiService();
   return api.patch<User>(`${paths}/${id}/status`, { status });
 }
 
@@ -91,5 +96,8 @@ export function updateUserStatus(id: string, status: string) {
  * @returns Promise with updated user data
  */
 export function assignRolesToUser(userId: string, roleIds: string[]) {
-  return api.post<User, { roleIds: string[] }>(`${paths}/${userId}/roles`, { roleIds });
+  const api = useApiService();
+  return api.post<User, { roleIds: string[] }>(`${paths}/${userId}/roles`, {
+    roleIds,
+  });
 }

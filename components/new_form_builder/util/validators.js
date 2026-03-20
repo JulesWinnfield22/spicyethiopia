@@ -230,8 +230,13 @@ function num_minmax(value, limit, _, message) {
 }
 
 function phone(value, limit, _, message) {
-  let regex = /^(\+?2519|09)[0-9]{8}$/;
-  if (regex.test(value)) return [true];
+  if (!value) return [true];
+  // Strip everything except digits and +
+  const stripped = value.toString().replace(/[^\d+]/g, "");
+  // Canadian/US numbers are usually 10 digits (e.g. 4163612121) 
+  // or 11 digits with +1 prefix (e.g. +14163612121)
+  const regex = /^(\+1)?\d{10}$/;
+  if (regex.test(stripped)) return [true];
 
   return [false, message || `not a valid phone number`];
 }

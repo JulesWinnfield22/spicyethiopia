@@ -8,14 +8,22 @@ import icons from "~/utils/icons";
 import { staticRoute } from "~/utils/utils";
 import { useRoute } from "vue-router";
 import { computed, onMounted, ref, shallowRef, watchEffect } from "vue";
+import { useTransitionHelper } from "~/composables/useTransition";
+
+definePageMeta({
+  title: "Cart",
+});
+
+const { navigateWithTransition } = useTransitionHelper();
 
 const route = useRoute();
 const cartStore = useCartStore();
 
 const isSuccess = computed(() => route.params.type === "success");
+const isCancel = computed(() => route.params.type === "cancel");
 
 watchEffect(() => {
-  if (isSuccess.value) {
+  if (process.client && isSuccess.value) {
     cartStore.clearCart();
     localStorage.removeItem("pending_order_id");
     localStorage.removeItem("pending_order_data");
@@ -84,7 +92,7 @@ async function goTo(name: string) {
 <template>
   <section class="p-2 md:p-4 flex flex-col gap-6 container mx-auto">
     <div
-      v-if="!isSuccess"
+      v-if="!isSuccess && !isCancel"
       class="bg-base-clr backdrop-blur-sm py-4 flex border-b-2 border-gray-2 pb-4 items-center justify-between gap-2"
     >
       <button
@@ -96,14 +104,14 @@ async function goTo(name: string) {
       </button>
       <Button
         type="secondary"
-        @click="$router.push('/shop')"
+        @click="navigateWithTransition('/shop', 'Shop')"
         class="rounded-2xl items-center flex gap-2 bg-dark text-gray px-4 h-8"
       >
         <i v-html="icons.plus"></i>
         <span>Add Items</span>
       </Button>
     </div>
-    <div v-if="!isSuccess" class="w-full overflow-x-auto no-scrollbar py-2">
+    <div v-if="!isSuccess && !isCancel" class="w-full overflow-x-auto no-scrollbar py-2">
       <div
         class="flex items-center justify-between gap-4 min-w-[500px] md:min-w-0 max-w-6xl mx-auto px-2"
       >
@@ -174,15 +182,68 @@ async function goTo(name: string) {
       </div>
 
       <Button
-        @click="$router.push('/shop')"
+        @click="navigateWithTransition('/shop', 'Shop')"
         class="rounded-full px-12 py-4 text-xl font-bold transition-transform hover:scale-105"
       >
         Continue Shopping
       </Button>
     </div>
 
+    <!-- Cancel/Failure Message -->
+    <div
+      v-if="isCancel"
+      class="flex flex-col items-center justify-center py-20 gap-8 animate-in fade-in zoom-in duration-500"
+    >
+      <div class="relative">
+        <svg
+          width="93"
+          height="93"
+          viewBox="0 0 93 93"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle cx="46.5" cy="46.5" r="46" stroke="#EF4444" stroke-width="1" />
+          <path
+            d="M30 30L63 63M63 30L30 63"
+            stroke="#EF4444"
+            stroke-width="6"
+            stroke-linecap="round"
+          />
+        </svg>
+      </div>
+
+      <div class="text-center flex flex-col gap-3">
+        <h1 class="text-3xl md:text-5xl font-dm-serif font-bold text-dark">
+          Payment Cancelled
+        </h1>
+        <p class="text-lg md:text-xl max-w-md mx-auto">
+          Your payment process was not completed. You can try again or continue shopping.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-4">
+        <Button
+          @click="navigateWithTransition('/cart', 'Cart')"
+          class="rounded-full px-12 py-4 text-xl font-bold transition-transform hover:scale-105 bg-dark text-white"
+        >
+          Return to Cart
+        </Button>
+        <Button
+          @click="navigateWithTransition('/shop', 'Shop')"
+          type="edge"
+          class="rounded-full px-12 py-4 text-xl font-bold transition-transform hover:scale-105"
+        >
+          Back to Shop
+        </Button>
+      </div>
+
+      <p class="text-sm opacity-60">
+        Having trouble? <NuxtLink to="/login" class="underline font-bold">Try logging in</NuxtLink> or contact support.
+      </p>
+    </div>
+
     <template
-      v-if="!isSuccess"
+      v-if="!isSuccess && !isCancel"
       v-for="({ name, com }, idx) in componetns"
       :key="name"
     >

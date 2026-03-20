@@ -18,8 +18,7 @@ import { Flip } from "gsap/Flip";
 import ProductCard from "~/components/ProductCard.vue";
 
 definePageMeta({
-  pageTransition: false,
-  hideNavbar: true,
+  layout: "default",
 });
 
 const cartStore = useCartStore();
@@ -41,25 +40,66 @@ const { data: product } = await useAsyncData(
 
 const productId = computed(() => product.value?.id);
 
-// Dynamic SEO using useSeoMeta
+// Standard SEO using useSeoMeta
 useSeoMeta({
   title: () =>
     product.value?.title
       ? `${product.value.title} | The Spicy Ethiopian`
       : "The Spicy Ethiopian",
   ogTitle: () => product.value?.title,
+  twitterTitle: () => product.value?.title,
   description: () => product.value?.description?.substring(0, 160),
   ogDescription: () => product.value?.description,
+  twitterDescription: () => product.value?.description?.substring(0, 160),
   ogImage: () =>
     product.value?.images?.[0]
       ? `${staticRoute}/${product.value.images[0]}`
       : undefined,
+  twitterImage: () =>
+    product.value?.images?.[0]
+      ? `${staticRoute}/${product.value.images[0]}`
+      : undefined,
+  twitterCard: "summary_large_image",
+  ogType: "website",
+  ogUrl: () => route.fullPath,
+});
+
+// Custom product meta tags using useHead
+useHead({
+  meta: [
+    {
+      property: "product:price:amount",
+      content: () =>
+        String(product.value?.discountedPrice ?? product.value?.price ?? 0),
+    },
+    {
+      property: "product:price:currency",
+      content: "USD",
+    },
+    {
+      property: "product:availability",
+      content: "instock",
+    },
+    {
+      property: "product:condition",
+      content: "new",
+    },
+    {
+      name: "product:weight",
+      content: () =>
+        product.value
+          ? `${product.value.weight}${product.value.weightUnit}`
+          : "",
+    },
+  ],
 });
 
 const isInstructionsActive = ref(false);
+const isMounted = ref(false);
 
 onMounted(() => {
-  if (process.client && productId.value) {
+  isMounted.value = true;
+  if (process.client && isMounted.value && productId.value) {
     const state = getAndClearFlipState();
     if (state) {
       nextTick(() => {
@@ -135,57 +175,55 @@ watch(
             {{ product?.description }}
           </p>
         </div>
-        <div>
-          <div
-            v-if="productId && cartStore.thisItem(productId)"
-            class="bg-dark text-white h-14 flex w-full items-center gap-6 rounded-full px-6 shadow-lg"
-          >
-            <div class="flex items-center gap-4">
-              <button
-                @click.prevent.stop="cartStore.decrement(productId!)"
-                class="bg-white/10 hover:bg-white/20 rounded-full size-10 grid place-items-center transition-colors"
-              >
-                <i class="*:size-6" v-html="icons.minus" />
-              </button>
-              <span class="text-xl font-bold w-6 text-center">{{
-                cartStore.thisItem(productId!)?.quantity
-              }}</span>
-              <button
-                @click.prevent.stop="cartStore.increment(productId!)"
-                class="bg-white/10 hover:bg-white/20 rounded-full size-10 grid place-items-center transition-colors"
-              >
-                <i class="*:size-6" v-html="icons.plus" />
-              </button>
-            </div>
-
+        <div
+          v-if="productId && cartStore.thisItem(productId)"
+          class="bg-dark text-white h-14 flex w-full items-center gap-6 rounded-full px-6 shadow-lg"
+        >
+          <div class="flex items-center gap-4">
             <button
-              @click.stop.prevent="cartStore.removeItem(productId!)"
-              class="grid size-10 ml-auto rounded-full bg-red-500/20 hover:bg-red-500 text-white transition-colors place-items-center"
+              @click.prevent.stop="cartStore.decrement(productId!)"
+              class="bg-white/10 hover:bg-white/20 rounded-full size-10 grid place-items-center transition-colors"
             >
-              <i v-html="icons.trash1" class="*:size-6" />
+              <i class="*:size-6" v-html="icons.minus" />
+            </button>
+            <span class="text-xl font-bold w-6 text-center">{{
+              cartStore.thisItem(productId!)?.quantity
+            }}</span>
+            <button
+              @click.prevent.stop="cartStore.increment(productId!)"
+              class="bg-white/10 hover:bg-white/20 rounded-full size-10 grid place-items-center transition-colors"
+            >
+              <i class="*:size-6" v-html="icons.plus" />
             </button>
           </div>
+
           <button
-            @click="
-              cartStore.addItem({
-                product: product?.id ?? '',
-                image:
-                  typeof product?.images?.[0] === 'string'
-                    ? product.images[0]
-                    : '',
-                title: product?.title ?? '',
-                price: Number(product?.discountedPrice || product?.price || 0),
-                size: Number(product?.quantity ?? 0),
-                quantity: 1,
-                description: product?.description,
-              })
-            "
-            v-else
-            class="w-full py-4 px-8 rounded-full bg-dark text-white font-bold text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+            @click.stop.prevent="cartStore.removeItem(productId!)"
+            class="grid size-10 ml-auto rounded-full bg-red-500/20 hover:bg-red-500 text-white transition-colors place-items-center"
           >
-            Add To Cart
+            <i v-html="icons.trash1" class="*:size-6" />
           </button>
         </div>
+        <button
+          @click="
+            cartStore.addItem({
+              product: product?.id ?? '',
+              image:
+                typeof product?.images?.[0] === 'string'
+                  ? product.images[0]
+                  : '',
+              title: product?.title ?? '',
+              description: product?.description ?? '',
+              price: Number(product?.discountedPrice || product?.price || 0),
+              size: Number(product?.quantity ?? 0),
+              quantity: 1,
+            })
+          "
+          v-else
+          class="w-full py-4 px-8 rounded-full bg-dark text-white font-bold text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-xl"
+        >
+          Add To Cart
+        </button>
         <div
           class="flex flex-col bg-white shadow-xl rounded-2xl p-6 border border-gray-100"
         >

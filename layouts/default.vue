@@ -17,6 +17,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Flip } from "gsap/Flip";
 import { useTransitionHelper } from "~/composables/useTransition";
+import { clearAllSiteCache } from "~/utils/cache";
+
+const CACHE_VERSION = "2024.03.08.2"; // Bumped to include SW unregistration
 
 const route = useRoute();
 const cartStore = useCartStore();
@@ -49,8 +52,24 @@ const isNavVisible = ref(true);
 const isMenuOpen = ref(false);
 const lastScrollY = ref(0);
 
-onMounted(() => {
+onMounted(async () => {
   if (process.client) {
+    // Cache clearing logic
+    const savedVersion = localStorage.getItem("SPICY_CACHE_VERSION");
+    const forceClear = route.query.clearCache === "true";
+
+    if (savedVersion !== CACHE_VERSION || forceClear) {
+      await clearAllSiteCache();
+      localStorage.setItem("SPICY_CACHE_VERSION", CACHE_VERSION);
+
+      if (forceClear) {
+        // Remove the query param from URL without refreshing
+        const url = new URL(window.location.href);
+        url.searchParams.delete("clearCache");
+        window.history.replaceState({}, "", url.toString());
+      }
+    }
+
     gsap.registerPlugin(ScrollTrigger, Flip);
 
     lenis.value = new Lenis({
@@ -139,7 +158,7 @@ const handleLeave = (el: Element, done: () => void) => {
         class="w-full px-4 md:px-8 lg:px-12 flex items-center justify-between"
       >
         <div
-          @click="navigateWithTransition('/')"
+          @click="navigateWithTransition('/', 'Spicy Ethiopian')"
           class="flex items-center gap-4 hover:scale-105 transition-transform shrink-0 cursor-pointer"
         >
           <img
@@ -153,20 +172,34 @@ const handleLeave = (el: Element, done: () => void) => {
         </div>
 
         <div class="flex items-center gap-6">
+          <!-- <div
+            class="flex cursor-pointer bg-base-clr/10 shadow-sm px-4 rounded-full items-center gap-2 font-dm-sans font-medium hover:opacity-70 transition-opacity group"
+            @click="navigateWithTransition('/spice')"
+          >
+            <span class="hidden text-lg sm:inline-block text-black"
+              >Spices</span
+            >
+            <div class="relative size-10 grid place-items-center">
+              <i v-html="icons.badge" class="w-6 h-6" />
+            </div>
+          </div> -->
+
           <div
             class="flex cursor-pointer bg-base-clr/10 shadow-sm px-4 rounded-full items-center gap-2 font-dm-sans font-medium hover:opacity-70 transition-opacity group"
-            @click="navigateWithTransition('/cart')"
+            @click="navigateWithTransition('/cart', 'Cart')"
           >
             <span class="hidden text-lg sm:inline-block text-black">Cart</span>
 
             <div class="relative size-10 grid place-items-center">
               <i v-html="icons.cart" class="w-6 h-6" />
-              <span
-                v-if="cartStore.count > 0"
-                class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] size-4 rounded-full flex items-center justify-center font-bold shadow-sm"
-              >
-                {{ cartStore.count }}
-              </span>
+              <ClientOnly>
+                <span
+                  v-if="cartStore.count > 0"
+                  class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] size-4 rounded-full flex items-center justify-center font-bold shadow-sm"
+                >
+                  {{ cartStore.count }}
+                </span>
+              </ClientOnly>
             </div>
           </div>
 
@@ -196,9 +229,7 @@ const handleLeave = (el: Element, done: () => void) => {
       <Footer />
     </div>
 
-    <ClientOnly>
-      <TransitionOverlay ref="transitionOverlayRef" />
-    </ClientOnly>
+    <TransitionOverlay ref="transitionOverlayRef" />
   </div>
 </template>
 

@@ -4,7 +4,9 @@ import logo from "~/assets/img/footerLogo.png";
 import icons from "~/utils/icons";
 import { getContactInfo } from "~/features/public/api/contactApi";
 import { useApiRequest } from "~/composables/useApiRequest";
+import { useTransitionHelper } from "~/composables/useTransition";
 
+const { navigateWithTransition } = useTransitionHelper();
 const { response, send } = useApiRequest();
 
 onMounted(() => {
@@ -70,29 +72,120 @@ function getSocialIcon(platform: string) {
       <div class="flex flex-col gap-4">
         <h3 class="text-sm md:text-xl font-bold">About Us</h3>
         <ul class="flex flex-col gap-2 text-xs md:text-sm">
-          <li><a href="#" class="hover:underline">Services</a></li>
-          <li><a href="#" class="hover:underline">FAQ</a></li>
-          <li><a href="#" class="hover:underline">Support</a></li>
-          <li><a href="#" class="hover:underline">Blog</a></li>
-          <li><a href="#" class="hover:underline">Events</a></li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Services</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >FAQ</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Support</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Blog</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Events</a
+            >
+          </li>
         </ul>
       </div>
       <div class="flex flex-col gap-4">
         <h3 class="text-sm md:text-xl font-bold">Terms</h3>
         <ul class="flex flex-col gap-2 text-xs md:text-sm">
-          <li><a href="#" class="hover:underline">Privacy</a></li>
-          <li><a href="#" class="hover:underline">Careers</a></li>
-          <li><a href="#" class="hover:underline">Investors</a></li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Privacy</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Careers</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Investors</a
+            >
+          </li>
         </ul>
       </div>
       <div class="flex flex-col gap-4">
         <h3 class="text-sm md:text-xl font-bold">Partners</h3>
         <ul class="flex flex-col gap-2 text-xs md:text-sm">
-          <li><a href="#" class="hover:underline">Support Center</a></li>
-          <li><a href="#" class="hover:underline">Knowledge Base</a></li>
-          <li><a href="#" class="hover:underline">Community</a></li>
-          <li><a href="#" class="hover:underline">Affiliates</a></li>
-          <li><a href="#" class="hover:underline">Become a Partner</a></li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Support Center</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Knowledge Base</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Community</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Affiliates</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="hover:underline"
+              >Become a Partner</a
+            >
+          </li>
         </ul>
       </div>
     </div>
@@ -120,9 +213,15 @@ function getSocialIcon(platform: string) {
         <div
           class="text-gray flex gap-4 justify-center flex-wrap *:underline underline-offset-4 font-light"
         >
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Cookies Settings</a>
+          <a href="#" @click.prevent="navigateWithTransition('/')"
+            >Privacy Policy</a
+          >
+          <a href="#" @click.prevent="navigateWithTransition('/')"
+            >Terms of Service</a
+          >
+          <a href="#" @click.prevent="navigateWithTransition('/')"
+            >Cookies Settings</a
+          >
         </div>
       </div>
     </div>

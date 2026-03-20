@@ -190,7 +190,7 @@ defineExpose({
             validation="required"
           />
           <Input
-            :value="cartStore.info.shippingAddress?.country"
+            :value="cartStore.info.shippingAddress?.country || 'Canada'"
             name="country"
             label="Country"
             :attributes="{

@@ -14,6 +14,10 @@ function removeCache(key: string) {
   cacheStore.delete(key);
 }
 
+export function clearAllPaginationCache() {
+  cacheStore.clear();
+}
+
 function getCache(key: string) {
   const cached = cacheStore.get(key);
   if (!cached) return null;
@@ -158,6 +162,7 @@ export function usePagination<T = any>(options: PaginationOptions<T>) {
 
   let fetchController: AbortController;
   async function fetch(next = true, current = false) {
+    console.log("[usePagination] fetch called", { next, current });
     if (next && pagination.done.value) return;
 
     const paginationData = getPaginationData(next, current);
@@ -166,6 +171,7 @@ export function usePagination<T = any>(options: PaginationOptions<T>) {
     if (cacheEnabled) {
       const cachedData = getCache(cacheKey);
       if (cachedData) {
+        console.log("[usePagination] cache hit for key:", cacheKey);
         if (paginationOptions.value.store) {
           paginationOptions.value.store.set(cachedData);
         }
