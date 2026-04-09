@@ -61,7 +61,7 @@ function submitProduct({ values }: { values: Product }) {
         placeholder: 'Enter product description',
       }"
       :value="product?.description"
-      validation="required|alpha|minmax-395,1000"
+      validation="required|minmax-395,1000"
     />
     <ListInputWIthTextareaInput
       :value="product?.ingredients as string[]"
