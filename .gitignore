@@ -31,3 +31,6 @@ Thumbs.db
 /test-results
 # Local netlify folder
 .netlify
+# Deployment scripts (contain sensitive server info)
+deploy.sh
+setup_nuxt_vps.sh
