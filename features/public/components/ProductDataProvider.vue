@@ -1,32 +1,26 @@
 <script setup lang="ts">
 import { usePagination } from "~/composables/usePagination";
 import { getProducts } from "~/features/admin/api/productApi";
-import { useProductsStore } from "~/features/admin/store/productsStore";
+import type { Product } from "~/features/admin/store/productsStore";
 
-const productsStore = useProductsStore();
+const props = defineProps<{
+  status?: string;
+}>();
 
 const pagination = usePagination({
-  auto: false,
-  store: productsStore,
-  cb: getProducts,
-});
-
-const { data, pending } = await useAsyncData("products-list", async () => {
-  if (productsStore.products.length > 0) return productsStore.products;
-  const res = await getProducts({ page: 1, limit: 25 });
-  if (res.success) {
-    const responseData: any = res.data;
-    const data = responseData?.response || [];
-    productsStore.set(data);
-    return data;
-  }
-  return [];
+  auto: true,
+  cb: (query: any) =>
+    getProducts({
+      ...query,
+      status: props.status !== "ALL" ? props.status : undefined,
+    }),
+  watch: [() => props.status],
 });
 </script>
 <template>
   <slot
-    :products="productsStore.products"
-    :pending="pending"
+    :products="pagination.data.value as any as Product[]"
+    :pending="pagination.pending.value"
     :search="pagination.search"
   />
 </template>

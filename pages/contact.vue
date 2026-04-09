@@ -4,10 +4,10 @@ import Button from "~/components/Button.vue";
 import Form from "~/components/new_form_builder/Form.vue";
 import { Input, Textarea } from "~/components/new_form_elements";
 import { sendMessage } from "~/features/public/api/contactApi";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { toasted } from "~/utils/utils";
 
-const { send, pending } = useApiRequest();
+const { send, pending } = useApiMutation();
 
 function handleSendMessage({ values, reset }: any) {
   send(

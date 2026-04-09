@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormModalParent from "~/components/FormModalParent.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import Button from "~/components/Button.vue";
 import { toasted } from "~/utils/utils";
 import { closeModal } from "@customizer/modal-x";

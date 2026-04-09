@@ -12,18 +12,17 @@ import { usePagination } from "~/composables/usePagination";
 import { getUsers } from "~/features/admin/api/userApi";
 import SearchInput from "~/features/admin/components/SearchInput.vue";
 import { openModal } from "@customizer/modal-x";
-import { useUsersStore } from "~/features/admin/user/store/usersStore";
-import DropdownWrapper from "~/components/DropdownWrapper.vue";
-
-const router = useRouter(); // Used for navigation in goToAddUser if needed
+import DropdownParent from "~/composables/DropdownParent.vue";
 
 const searchQuery = ref("");
-const activeFilter = ref("ACTIVE");
+const activeFilter = ref("ALL");
 
-const usersStore = useUsersStore();
 const pagination = usePagination({
-  store: usersStore,
-  cb: (data: any) => getUsers({ status: activeFilter.value, ...data }),
+  cb: (data: any) =>
+    getUsers({
+      status: activeFilter.value !== "ALL" ? activeFilter.value : undefined,
+      ...data,
+    }),
   watch: [activeFilter],
 });
 
@@ -43,13 +42,18 @@ watch(activeFilter, () => {
       Add User
     </Button>
   </Teleport>
-  <div class="flex justify-between items-center">
-    <div class="flex gap-2.5">
+  <div
+    class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3"
+  >
+    <div
+      class="flex gap-2 overflow-x-auto w-full md:w-auto flex-nowrap pb-1 md:pb-0"
+    >
       <Button
         :type="activeFilter == f ? 'secondary' : 'edge'"
         v-for="f in USER_STATUS"
         :key="f"
         @click="activeFilter = f"
+        class="whitespace-nowrap shrink-0"
       >
         {{ f }}
       </Button>
@@ -57,7 +61,7 @@ watch(activeFilter, () => {
     <SearchInput
       v-model="searchQuery"
       placeholder="Search Users"
-      width="w-96"
+      width="w-full md:w-96"
     />
   </div>
   <Table
@@ -66,7 +70,7 @@ watch(activeFilter, () => {
       head: ['Name', 'Email', 'Role', 'Phone', 'Status', 'Actions'],
       row: ['fullName', 'email', 'roleName', 'phone_number', 'userStatus'],
     }"
-    :rows="usersStore.users || []"
+    :rows="pagination.data.value || []"
     :cells="{
       userStatus: UserStatusCell,
       fullName: (_: any, row: User) => `${row.firstName} ${row.fathersName}`,
@@ -74,11 +78,24 @@ watch(activeFilter, () => {
     }"
   >
     <template #actions="{ row }">
-      <DropdownWrapper
-        :options="
-          [
+      <Dropdown position="right-bottom" v-slot="{ open, toggle }">
+        <button
+          class="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-black transition-colors"
+          @click="() => toggle()"
+        >
+          More
+          <span>
+            <i
+              class="fa-solid"
+              :class="open ? 'fa-chevron-up' : 'fa-chevron-down'"
+            ></i>
+          </span>
+        </button>
+        <DropdownParent
+          :items="[
             {
               name: 'View Details',
+              icon: icons.eye,
               action: () => console.log('View Details clicked for', row.id),
             },
             {
@@ -88,16 +105,17 @@ watch(activeFilter, () => {
             },
             {
               name: 'Email User',
+              icon: icons.mail,
               action: () => console.log('Email User clicked for', row.email),
             },
             {
               name: 'Delete User',
+              icon: icons.trash1,
               action: () => console.log('Delete User clicked for', row.id),
             },
-          ].map((el) => el.name)
-        "
-      >
-      </DropdownWrapper>
+          ]"
+        />
+      </Dropdown>
     </template>
   </Table>
 </template>

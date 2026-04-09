@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormModalParent from "~/components/FormModalParent.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import ProductForm from "~/features/admin/product/form/ProductForm.vue";
 import { useForm } from "~/components/new_form_builder/useForm";
 import Button from "~/components/Button.vue";
@@ -18,7 +18,7 @@ const props = defineProps({
   },
 });
 
-const productReq = useApiRequest();
+const productReq = useApiMutation();
 const { submit } = useForm("product-form");
 
 const productsStore = useProductsStore();

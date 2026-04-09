@@ -1,6 +1,6 @@
 <script setup>
 import InputLayout from "~/components/new_form_elements/NewInputLayout.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { InputParent } from "~/new_form_builder";
 import { computed, nextTick, onMounted, ref, watch } from "vue";
 import { OnClickOutside } from "@vueuse/components";
@@ -33,7 +33,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue"]);
 
-const agencyReq = useApiRequest();
+const agencyReq = useApiMutation();
 
 const search = ref("");
 const typedText = ref("");

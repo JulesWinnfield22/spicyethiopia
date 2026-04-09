@@ -5,14 +5,16 @@ import {
   getContactInfo,
   updateContactInfo,
 } from "~/features/admin/api/contactApi";
-import { useApiRequest, removeCache } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
+import { useQueryClient } from "@tanstack/vue-query";
 import icons from "~/utils/icons";
 import { toasted } from "~/utils/utils";
 import Button from "~/components/Button.vue";
 
 const CONTACT_INFO_CACHE_KEY = "admin_contact_info";
-const { response, send, pending } = useApiRequest();
-const updateReq = useApiRequest();
+const { response, send, pending } = useApiMutation();
+const updateReq = useApiMutation();
+const queryClient = useQueryClient();
 
 const form = ref({
   description: "",
@@ -55,9 +57,6 @@ async function fetchContactInfo() {
         };
       }
     },
-    false,
-    false,
-    CONTACT_INFO_CACHE_KEY,
   );
 }
 
@@ -86,7 +85,7 @@ async function handleSave() {
     () => updateContactInfo(form.value),
     (res: any) => {
       if (res.success) {
-        removeCache(CONTACT_INFO_CACHE_KEY);
+        queryClient.invalidateQueries({ queryKey: [CONTACT_INFO_CACHE_KEY] });
       }
       toasted(
         res.success,

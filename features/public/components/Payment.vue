@@ -4,7 +4,7 @@ import TotalPrice from "./TotalPrice.vue";
 import Button from "~/components/Button.vue";
 import { openModal } from "@customizer/modal-x";
 import { genCheckOutUrl } from "../api/orderApi";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { useCartStore } from "~/stores/cartStore";
 import { toasted } from "~/utils/utils";
 
@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 const store = useCartStore();
-const req = useApiRequest();
+const req = useApiMutation();
 
 function order() {
   const orderData = {

@@ -222,14 +222,14 @@
 <script setup>
 import { onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { getOrderById } from "~/features/public/api/orderApi";
 import { dateFormat, currencyFormat, staticRoute } from "~/utils/utils";
 import Button from "~/components/Button.vue";
 import { openModal } from "@customizer/modal-x";
 
 const route = useRoute();
-const { response, send, pending, error } = useApiRequest();
+const { response, send, pending, error } = useApiMutation();
 
 onMounted(() => {
   if (route.params.id) {

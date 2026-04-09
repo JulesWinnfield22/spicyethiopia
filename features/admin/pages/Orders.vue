@@ -28,11 +28,24 @@ const orderActions = [
   },
 ];
 
-const filters = ["Waiting", "Shipped", "Delivered", "Refunded", "All"];
-const activeFilter = ref("Waiting");
+const orderStatusFilters = [
+  "All",
+  "PENDING",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED",
+  "REFUNDED",
+  "EXPIRED",
+];
+const activeFilter = ref("All");
 
 const pagination = usePagination<Order>({
-  cb: (query: any) => getOrders({ ...query, status: activeFilter.value }),
+  cb: (query: any) =>
+    getOrders({
+      ...query,
+      status: activeFilter.value === "All" ? undefined : activeFilter.value,
+    }),
   watch: [activeFilter],
 });
 
@@ -65,7 +78,7 @@ watch(
     <div class="flex gap-2.5">
       <Button
         :type="activeFilter == f ? 'secondary' : 'edge'"
-        v-for="f in filters"
+        v-for="f in orderStatusFilters"
         :key="f"
         @click="activeFilter = f"
       >
@@ -75,9 +88,9 @@ watch(
     <Search v-model="pagination.search.value" />
   </div>
   <Table
-    :pending="pagination.pending.value === true"
+    :pending="pagination.pending.value"
     @row="() => {}"
-    :rows="pagination.response.value || []"
+    :rows="pagination.data.value || []"
     :headers="{
       head: [
         'Order ID',

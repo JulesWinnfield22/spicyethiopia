@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import Button from "./Button.vue";
-import Dropdown from "./Dropdown.vue";
-import DropdownPortal from "./DropdownPortal.vue";
+import { useWindowSize } from "~/composables/useWindowSize";
 
 const props = defineProps({
   label: {
@@ -27,6 +25,9 @@ const props = defineProps({
 });
 
 defineEmits(["select"]);
+
+const size = useWindowSize();
+const isMobile = computed(() => size.value.width < 768);
 </script>
 
 <template>
@@ -49,11 +50,17 @@ defineEmits(["select"]);
       <DropdownPortal>
         <div class="__dropdown-wrapper" :class="[className]">
           <ul
-            class="__d_shadow min-w-[12rem] bg-white border border-gray-300 rounded-lg flex flex-col p-1.5 shadow-xl overflow-y-auto max-h-[inherit]"
+            class="min-w-[12rem] border border-gray-300 rounded-lg flex flex-col p-1.5 overflow-y-auto max-h-[inherit]"
+            :class="[
+              isMobile
+                ? 'border-none rounded-none shadow-none !p-0 !min-w-0 bg-transparent w-full'
+                : 'shadow-xl __d_shadow bg-white',
+            ]"
           >
             <li
               v-if="label"
               class="px-2 py-1.5 text-xs font-bold text-gray-500 border-b border-gray-100 mb-1"
+              :class="{ 'text-sm mb-3 pt-0': isMobile }"
             >
               {{ label }}
             </li>
@@ -64,7 +71,12 @@ defineEmits(["select"]);
                 v-for="item in options"
                 :key="item"
                 v-ripple
-                class="w-full flex rounded items-center h-9 px-2 hover:bg-gray-100 cursor-pointer text-sm gap-2"
+                class="w-full flex rounded items-center cursor-pointer transition-colors gap-3"
+                :class="[
+                  isMobile
+                    ? 'h-14 px-4 text-base font-semibold border-b border-gray-50 last:border-none hover:bg-gray-50'
+                    : 'h-9 px-2 text-sm hover:bg-gray-100',
+                ]"
                 @click="
                   () => {
                     $emit('select', item);

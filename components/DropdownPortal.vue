@@ -6,12 +6,17 @@ import {
   nextTick,
   onUnmounted,
   unref,
+  computed, // Added computed
   type Ref,
 } from "vue";
+import { useWindowSize } from "~/composables/useWindowSize"; // Added useWindowSize import
 
 const triggerRef = inject<Ref<HTMLElement | null>>("triggerRef");
 const isOpen = inject<Ref<boolean>>("open");
 const alignment = inject<Ref<string>>("position" as any, ref("left-bottom"));
+
+const size = useWindowSize(); // Added useWindowSize
+const isMobile = computed(() => size.value.width < 768); // Added isMobile computed property
 
 const contentRef = ref<HTMLElement | null>(null);
 const ready = ref(false);
@@ -22,7 +27,19 @@ const dropdownStyles = ref({
 });
 
 function updatePosition() {
-  if (!triggerRef?.value || !contentRef.value || !isOpen?.value) return;
+  if (!isOpen?.value) return;
+
+  if (isMobile.value) { // Added mobile-specific logic
+    dropdownStyles.value = {
+      top: "auto",
+      left: "0px",
+      maxHeight: "80vh",
+    };
+    ready.value = true;
+    return;
+  }
+
+  if (!triggerRef?.value || !contentRef.value) return;
 
   const triggerRect = triggerRef.value.getBoundingClientRect();
   const contentRect = contentRef.value.getBoundingClientRect();
@@ -99,23 +116,68 @@ onUnmounted(() => {
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="isOpen"
-      ref="contentRef"
-      class="fixed z-[9999]"
-      :style="{
-        ...dropdownStyles,
-        visibility: ready ? 'visible' : 'hidden',
-        pointerEvents: ready ? 'auto' : 'none',
-      }"
-    >
-      <slot />
-    </div>
+    <Transition name="fade">
+      <div
+        v-if="isOpen && isMobile"
+        class="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-[9998]"
+        @click="isOpen = false"
+      />
+    </Transition>
+
+    <Transition :name="isMobile ? 'slide-up' : 'fade'">
+      <div
+        v-if="isOpen"
+        ref="contentRef"
+        class="fixed z-[9999] overflow-hidden flex flex-col"
+        :class="
+          isMobile
+            ? 'bottom-0 left-0 right-0 w-full bg-white rounded-t-[32px] shadow-2xl border border-gray-100 py-4 pb-10'
+            : ''
+        "
+        :style="{
+          ...dropdownStyles,
+          visibility: ready ? 'visible' : 'hidden',
+          pointerEvents: ready ? 'auto' : 'none',
+        }"
+      >
+        <!-- Mobile Handle -->
+        <div
+          v-if="isMobile"
+          class="mx-auto mb-4 h-1.5 w-12 rounded-full bg-gray-200"
+        />
+        <slot />
+      </div>
+    </Transition>
   </Teleport>
 </template>
 
 <style scoped>
 .fixed {
   position: fixed;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-up-enter-from,
+.slide-up-leave-to {
+  transform: translateY(100%);
+}
+
+.slide-up-enter-to,
+.slide-up-leave-from {
+  transform: translateY(0);
 }
 </style>

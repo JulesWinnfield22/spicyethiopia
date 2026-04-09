@@ -3,11 +3,11 @@ import { onMounted, computed } from "vue";
 import logo from "~/assets/img/footerLogo.png";
 import icons from "~/utils/icons";
 import { getContactInfo } from "~/features/public/api/contactApi";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { useTransitionHelper } from "~/composables/useTransition";
 
 const { navigateWithTransition } = useTransitionHelper();
-const { response, send } = useApiRequest();
+const { response, send } = useApiMutation();
 
 onMounted(() => {
   send(() => getContactInfo());

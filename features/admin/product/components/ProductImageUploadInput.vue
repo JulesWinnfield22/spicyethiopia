@@ -5,7 +5,7 @@ import NewInputLayout from "~/components/new_form_elements/NewInputLayout.vue";
 import icons from "~/utils/icons";
 import { ref, watch, type PropType } from "vue";
 import { getImage } from "../../api/staticApi";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { allRequest, getObjUrl } from "~/utils/utils";
 
 const props = defineProps({
@@ -22,7 +22,7 @@ const props = defineProps({
 });
 
 const images = ref<{ name: string; file: File }[]>([]);
-const imagesReq = useApiRequest()
+const imagesReq = useApiMutation()
 
 console.log(props.value);
 

@@ -20,14 +20,14 @@ import icons from "~/utils/icons";
 import DealsOfTheMonth from "~/components/sections/DealsOfTheMonth.vue";
 import Ad from "~/components/Ad.vue";
 import Ad2 from "~/components/Ad2.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { getDealsOfTheMonth } from "~/features/admin/api/productApi";
 import { staticRoute } from "~/utils/utils";
 import Parallax from "~/components/Parallax.vue";
 import Reveal from "~/components/Reveal.vue";
 import gsap from "gsap";
 
-const dealsReq = useApiRequest();
+const dealsReq = useApiMutation();
 
 const dealsProducts = computed(() => {
   const res = (dealsReq.response.value || []).map((product: any) => ({

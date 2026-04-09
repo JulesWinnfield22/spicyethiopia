@@ -133,28 +133,28 @@ const pagination = props.api
   ? usePagination<T>({
       auto: props.api.auto,
       cb: props.api.cb,
-      store: props.api.store,
       perPage: props.api.perPage || 25,
       watch: props.api.watch || [],
-      attrName: props.api.key || "content",
     })
   : ({
       cb: async (f: any) => f,
-      store: null,
       perPage: ref(25),
       ASC: ref(null),
       pending: ref(false),
       sortBy: ref(null),
       watch: [],
-      attrName: null,
       send: () => {},
-      response: ref([]),
-      page: computed(() => 1),
-      totalPages: computed(() => 1),
-      search: ref(""),
       next: () => {},
-      auto: ref(false),
       previous: () => {},
+      setPage: () => {},
+      total: ref(0),
+      totalPages: ref(0),
+      done: ref(false),
+      page: ref(0),
+      response: ref([]),
+      data: ref([]),
+      search: ref(""),
+      auto: ref(false),
     } as any);
 
 function toUpper(str: string) {
@@ -212,17 +212,14 @@ watchEffect(() => {
   });
 });
 const rows = computed<T[]>(() => {
-  return props.rows.length
-    ? props.rows
-    : props.api?.store
-      ? props.api?.store?.getAll?.()
-      : pagination?.response?.value;
+  return props.rows.length ? props.rows : pagination?.data?.value || [];
 });
 
 const nextPage = inject("next", pagination.next);
 const previousPage = inject("previous", pagination.previous);
 const page = inject("page", pagination.page);
 const totalPages = inject("totalPages", pagination.totalPages);
+const setPage = inject("setPage", pagination.setPage);
 const perPage = inject<Ref<number> | number>("perPage", pagination.perPage);
 const perPageNum = computed(() =>
   typeof perPage === "number" ? perPage : perPage?.value,
@@ -280,6 +277,11 @@ const sorted = computed(() => {
   });
 });
 
+// Compute if actions are present
+const hasActions = computed(() =>
+  spec.value.head.some((h) => h.toLowerCase() === "actions"),
+);
+
 const perPageOptions = [10, 25, 50, 100, 1000];
 watch(
   () => perPageNum.value,
@@ -294,7 +296,86 @@ watch(
 
 <template>
   <div class="rounded-lg lg:w-full overflow-auto max-h-max">
+    <!-- Mobile card view -->
+    <template v-if="tableType !== 'desktop'">
+      <!-- Loading skeleton for mobile -->
+      <div v-if="isLoading" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div
+          v-for="n in perPageNum > 20 ? 20 : perPageNum"
+          :key="n"
+          class="bg-white rounded-2xl border border-gray-100 animate-pulse overflow-hidden"
+        >
+          <!-- Skeleton Header -->
+          <div
+            v-if="hasActions"
+            class="flex items-center justify-between px-4 pt-3 pb-1"
+          >
+            <div class="h-3 w-8 bg-gray-200 rounded-full" />
+            <div class="h-6 w-16 bg-gray-100 rounded-lg shadow-sm" />
+          </div>
+
+          <!-- Skeleton Body -->
+          <div class="grid grid-cols-2 gap-3 p-4 pt-2">
+            <div
+              v-for="h in spec.row.length || 4"
+              :key="h"
+              class="flex flex-col gap-1.5"
+            >
+              <div class="h-2.5 w-16 bg-gray-200 rounded-full" />
+              <div class="h-4 w-full bg-gray-100 rounded-full shadow-sm" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Card rows -->
+      <div
+        v-else-if="sorted?.length"
+        class="grid grid-cols-1 sm:grid-cols-2 gap-3"
+      >
+        <ResponsiveCardRow
+          v-for="(row, index) in sorted"
+          :key="(row as any)?.[uniqueKey as string] || index"
+          :row="row"
+          :index="index"
+          :row-keys="spec.row"
+          :head-keys="spec.head"
+          :cells="cells"
+          :page="page"
+          :per-page="perPageNum"
+          @row="(r: any) => emit('row', r as T)"
+        >
+          <template
+            v-slot:[slot]="values"
+            v-for="slot in Object.keys(slots || {})"
+          >
+            <slot :name="slot" v-bind="values as any" />
+          </template>
+          <template #actions="{ row: r }">
+            <slot name="actions" :row="r as T" />
+          </template>
+        </ResponsiveCardRow>
+      </div>
+      <!-- No data placeholder for mobile -->
+      <div v-else class="py-8">
+        <slot name="placeholder">
+          <div
+            class="bg-white p-6 flex flex-col gap-2 items-center rounded-2xl border border-gray-100"
+          >
+            <div
+              class="flex-1 flex justify-center py-5 size-48 *:size-full"
+              v-html="icons.no_data"
+            />
+            <p class="text-xl font-bold">
+              {{ placeholder ? placeholder : "No Data Found" }}
+            </p>
+          </div>
+        </slot>
+      </div>
+    </template>
+
+    <!-- Desktop table view -->
     <div
+      v-else
       class="rounded-lg border border-gray-300 lg:w-full lg:overflow-x-auto max-h-max"
     >
       <DataTable
@@ -413,38 +494,72 @@ watch(
         </template>
       </DataTable>
     </div>
+
     <div
       v-if="showPagination"
-      class="hidden md:flex items-center overflow-hidden rounded-md mt-2 p-2 justify-between"
+      class="flex flex-wrap items-center gap-y-3 gap-x-6 overflow-hidden rounded-md mt-4 p-3 justify-between bg-white border border-gray-100 shadow-sm"
     >
-      <div class="flex-1 flex items-center gap-2">
-        <p class="text-xs">Page {{ page || 1 }} of {{ totalPages || 1 }}</p>
-        <div class="text-xs border-l border-black pl-2">
-          per page
-          <select
-            @change="(ev: any) => updateLimit(ev.target.value)"
-            :value="perPageNum"
-            class="appearance-none rounded-md text-xs font-medium p-1 text-center m-0"
-          >
-            <option
-              :value="value"
-              v-for="value in perPageOptions.sort((a, b) => a - b)"
+      <div class="flex flex-wrap items-center gap-4">
+        <!-- Page Selector -->
+        <div class="flex items-center gap-2 min-w-max">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Page</span>
+          <div class="relative flex items-center">
+            <select
+              :value="page ?? 0"
+              @change="(ev: any) => setPage(Number(ev.target.value))"
+              class="h-8 pl-2 pr-6 rounded border border-gray-200 bg-gray-50 text-xs font-semibold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/5"
             >
-              {{ value }}
-            </option>
-          </select>
+              <option v-for="p in (totalPages || 1)" :key="p - 1" :value="p - 1">
+                {{ p }}
+              </option>
+            </select>
+            <i v-html="icons.down" class="absolute right-1.5 pointer-events-none *:size-3 text-gray-400" v-if="icons.down"/>
+          </div>
+          <span class="text-xs text-gray-400 font-medium whitespace-nowrap">of {{ totalPages || 1 }}</span>
+        </div>
+
+        <!-- Per Page Selector -->
+        <div class="flex items-center gap-2 border-l border-gray-100 pl-4 min-w-max">
+          <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Per Page</span>
+          <div class="relative flex items-center">
+            <select
+              @change="(ev: any) => updateLimit(Number(ev.target.value))"
+              :value="perPageNum"
+              class="h-8 pl-2 pr-6 rounded border border-gray-200 bg-gray-50 text-xs font-semibold appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/5"
+            >
+              <option
+                :value="value"
+                v-for="value in perPageOptions.sort((a, b) => a - b)"
+                :key="value"
+              >
+                {{ value }}
+              </option>
+            </select>
+            <i v-html="icons.down" class="absolute right-1.5 pointer-events-none *:size-3 text-gray-400" v-if="icons.down"/>
+          </div>
         </div>
       </div>
-      <div class="flex items-center gap-2">
+
+      <!-- Navigation Buttons -->
+      <div class="flex items-center gap-2 ml-auto">
         <Button
           size="sm"
-          class="border border-dark/10"
+          type="edge"
+          class="h-8! px-4! text-xs font-bold"
           v-ripple
           @click="previousPage"
+          :disabled="(page ?? 0) <= 0"
         >
           <span>Previous</span>
         </Button>
-        <Button size="sm" class="bg-dark text-white" v-ripple @click="nextPage">
+        <Button 
+          size="sm" 
+          type="secondary"
+          class="h-8! px-4! text-xs font-bold shadow-sm" 
+          v-ripple 
+          @click="nextPage"
+          :disabled="(page ?? 0) + 1 >= (totalPages || 1)"
+        >
           <span>Next</span>
         </Button>
       </div>

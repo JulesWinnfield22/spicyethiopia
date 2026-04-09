@@ -2,7 +2,7 @@ import type { AsyncResponse } from "~/interface";
 import { addToast } from "~/toast";
 import { jwtDecode } from "jwt-decode";
 
-export const DISCOUNT_STATUS = ["ACTIVE", "INACTIVE"];
+export const DISCOUNT_STATUS = ["ACTIVE", "INACTIVE", "REMOVED", "ALL"];
 export const staticRoute = {
   toString() {
     try {
@@ -110,6 +110,25 @@ export const ProductsStatus = {
   HIDDEN: "HIDDEN",
 };
 
+export const ORDER_STATUS_FILTERS = [
+  "PENDING",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED",
+  "REFUNDED",
+  "EXPIRED",
+  "ALL",
+];
+
+export const PAYMENT_STATUS_FILTERS = [
+  "PENDING",
+  "PAID",
+  "FAILED",
+  "REFUNDED",
+  "ALL",
+];
+
 export function isTokenExpired(token: string) {
   if (!token) return true;
   try {
@@ -121,7 +140,7 @@ export function isTokenExpired(token: string) {
     return true;
   }
 }
-export const USER_STATUS = ["ACTIVE", "PENDING", "SUSPENDED", "All"];
+export const USER_STATUS = ["ACTIVE", "PENDING", "DISABLED", "ALL"];
 
 export const toast = {
   success: (message: string) => {

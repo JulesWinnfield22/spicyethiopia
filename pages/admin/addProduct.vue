@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from "~/components/Button.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { createProduct } from "~/features/admin/api/productApi";
 import ProductForm from "~/features/admin/product/form/ProductForm.vue";
 import { getFakeProductFormData } from "~/features/admin/product/utils/populateStore";
@@ -13,7 +13,9 @@ import { toasted, toFormData } from "~/utils/utils";
 
 const productsStore = useProductsStore();
 
-const productReq = useApiRequest();
+const productReq = useApiMutation();
+
+const fakeProduct = import.meta.dev ? getFakeProductFormData() : undefined;
 
 function addProduc(values: Product) {
   if (productReq.pending.value) return;
@@ -42,7 +44,7 @@ function addProduc(values: Product) {
   </Teleport>
   <div class="border border-gray rounded p-4">
     <ProductForm
-      :product="getFakeProductFormData()"
+      :product="fakeProduct"
       :onSubmit="addProduc"
       :pending="productReq.pending.value"
     />

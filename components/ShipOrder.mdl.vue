@@ -5,7 +5,7 @@ import Select from "~/components/new_form_elements/Select.vue";
 import Button from "~/components/Button.vue";
 import { ref, type PropType } from "vue";
 import { shipOrder } from "~/features/public/api/orderApi";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { closeModal } from "@customizer/modal-x";
 
 const props = defineProps({
@@ -29,7 +29,7 @@ const carriers = [
   "GLS Canada",
 ];
 
-const { send, pending, error } = useApiRequest();
+const { send, pending, error } = useApiMutation();
 
 const handleShip = () => {
   send(

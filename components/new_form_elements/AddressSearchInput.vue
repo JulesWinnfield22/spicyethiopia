@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import InputLayout from "~/components/new_form_elements/NewInputLayout.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import InputParent from "~/components/new_form_builder/InputParent.vue";
 import { getAddressAutocomplete } from "~/features/public/api/addressApi";
 import icons from "~/utils/icons";
@@ -31,7 +31,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue", "select"]);
 
-const req = useApiRequest();
+const req = useApiMutation();
 
 const search = ref(props.modelValue || props.value || "");
 const addresses = ref<any[]>([]);

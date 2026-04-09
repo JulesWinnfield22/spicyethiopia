@@ -33,7 +33,7 @@ export default defineNuxtConfig({
     },
     async hooks({ nitro }) {
       const apiUrl =
-        process.env.BACKEND_API_URL || "https://api.insmarket5608.com/api/v1";
+        process.env.BACKEND_API_URL || "https://api.spicyethiopian.com/api/v1";
       try {
         const response = await fetch(`${apiUrl}/products/all`);
         const result = await response.json();
@@ -101,7 +101,7 @@ export default defineNuxtConfig({
       maximumFileSizeToCacheInBytes: 1024 * 1024 * 15, // 15 MB
       runtimeCaching: [
         {
-          urlPattern: /^https:\/\/api\.insmarket5608\.com\/static\/.*/i,
+          urlPattern: /^https:\/\/api\.spicyethiopian\.com\/static\/.*/i,
           handler: "StaleWhileRevalidate",
           options: {
             cacheName: "spicy-images-cache",
@@ -115,7 +115,7 @@ export default defineNuxtConfig({
           },
         },
         {
-          urlPattern: /^https:\/\/api\.insmarket5608\.com\/api\/v1\/.*/i,
+          urlPattern: /^https:\/\/api\.spicyethiopian\.com\/api\/v1\/.*/i,
           handler: "StaleWhileRevalidate",
           options: {
             cacheName: "spicy-api-cache",

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { getProducts } from "~/features/admin/api/productApi";
 import { debounce, staticRoute } from "~/utils/utils";
 import icons from "~/utils/icons";

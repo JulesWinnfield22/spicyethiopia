@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { getContent, setText } from "~/features/admin/api/contentApi";
 import icons from "~/utils/icons";
 import { ref } from "vue";
@@ -27,7 +27,7 @@ const props = defineProps({
 const route = useRoute()
 const edit = route.path.includes('admin')
 
-const contentReq = useApiRequest();
+const contentReq = useApiMutation();
 const text = ref(props.text || "");
 
 if(props.id) {
@@ -43,7 +43,7 @@ if(props.id) {
 
 
 let to: number;
-const req = useApiRequest();
+const req = useApiMutation();
 function setInput(ev: Event) {
   to = setTimeout(() => {
     req.send(

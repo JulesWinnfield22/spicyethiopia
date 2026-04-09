@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormModalParent from "~/components/FormModalParent.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import DiscountForm from "~/features/admin/discount/form/DiscountForm.vue";
 import { useForm } from "~/components/new_form_builder/useForm";
 import Button from "~/components/Button.vue";
@@ -18,7 +18,7 @@ const props = defineProps({
   },
 });
 
-const discountReq = useApiRequest();
+const discountReq = useApiMutation();
 const { submit } = useForm("discount-form");
 
 const discountsStore = useDiscountsStore();

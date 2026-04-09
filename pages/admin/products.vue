@@ -17,9 +17,9 @@ import ProductDataProvider from "~/features/public/components/ProductDataProvide
 import Search from "~/components/Search.vue";
 
 const searchQuery = ref("");
-const activeFilter = ref("Available");
+const activeFilter = ref("ALL");
 
-const PRODUCT_STATUS = ["Available", "Out of Stock", "Hidden", "All"];
+const PRODUCT_STATUS = ["VISIBLE", "HIDDEN", "ALL"];
 </script>
 
 <template>
@@ -30,19 +30,20 @@ const PRODUCT_STATUS = ["Available", "Out of Stock", "Hidden", "All"];
       </Button>
     </div>
   </Teleport>
-  <ProductDataProvider v-slot="{ products, search, pending }">
-    <div class="flex justify-between items-center">
-      <div class="flex gap-2.5">
+  <ProductDataProvider :status="activeFilter" v-slot="{ products, search, pending }">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+      <div class="flex gap-2 overflow-x-auto w-full md:w-auto flex-nowrap pb-1 md:pb-0">
         <Button
           :type="activeFilter == f ? 'secondary' : 'edge'"
           v-for="f in PRODUCT_STATUS"
           :key="f"
           @click="activeFilter = f"
+          class="whitespace-nowrap shrink-0"
         >
           {{ f }}
         </Button>
       </div>
-      <Search v-model="search.value" />
+      <Search v-model="search.value" class="w-full md:w-auto" />
     </div>
     <Table
       :pending="pending"

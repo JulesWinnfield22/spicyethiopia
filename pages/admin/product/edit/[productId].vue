@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Button from "~/components/Button.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import {
   createProduct,
   getProductById,
@@ -31,7 +31,7 @@ if (found) {
   product.value = found;
 }
 
-const getProductReq = useApiRequest();
+const getProductReq = useApiMutation();
 if (!found && productId) {
   getProductReq.send(
     () => getProductById(productId as string),
@@ -44,7 +44,7 @@ if (!found && productId) {
     },
   );
 }
-const productReq = useApiRequest();
+const productReq = useApiMutation();
 
 function editProduct(values: Product) {
   if (productReq.pending.value || product.value?.id == undefined) return;

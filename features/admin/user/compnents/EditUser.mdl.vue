@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormModalParent from "~/components/FormModalParent.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import UserForm from "~/features/admin/user/form/UserForm.vue";
 import icons from "~/utils/icons";
 import { closeModal } from "@customizer/modal-x";
@@ -19,8 +19,8 @@ const props = defineProps({
 	}
 })
 
-const userReq = useApiRequest();
-const roleReq = useApiRequest();
+const userReq = useApiMutation();
+const roleReq = useApiMutation();
 
 roleReq.send(
   () => getRoles(),

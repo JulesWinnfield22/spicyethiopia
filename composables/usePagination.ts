@@ -1,94 +1,35 @@
 import { computed, provide, ref, unref, watch } from "vue";
+import { useQuery, useQueryClient } from "@tanstack/vue-query";
 import { useTablePagination } from "./useTablePagination";
-import { useApiRequest } from "./useApiRequest";
-
-interface CacheEntry {
-  data: any;
-  expiresAt: number | null;
-  createdAt: number;
-}
-
-const cacheStore = new Map<string, CacheEntry>();
-
-function removeCache(key: string) {
-  cacheStore.delete(key);
-}
-
-export function clearAllPaginationCache() {
-  cacheStore.clear();
-}
-
-function getCache(key: string) {
-  const cached = cacheStore.get(key);
-  if (!cached) return null;
-
-  const now = Date.now();
-  const isExpired = cached.expiresAt && now > cached.expiresAt;
-
-  if (isExpired) {
-    cacheStore.delete(key);
-    return null;
-  }
-  return cached.data;
-}
-
-function setCache(key: string, data: any, ttl = 0) {
-  const expiresAt = ttl ? Date.now() + ttl * 1000 : null;
-  const cacheEntry: CacheEntry = {
-    data,
-    expiresAt,
-    createdAt: Date.now(),
-  };
-  cacheStore.set(key, cacheEntry);
-  return cacheEntry;
-}
 
 interface PaginationOptions<T = any> {
   cb?:
     | ((query: any, options?: { signal?: AbortSignal }) => Promise<any>)
     | null;
-  store?: any;
   auto?: boolean;
   perPage?: number;
   searchWordLength?: number;
   ASC?: boolean | null;
   sortBy?: string | null;
   watch?: any[];
-  attrName?: string | null;
-  cache?: {
-    enabled?: boolean;
-    ttl?: number;
-    key?: string | null;
-  };
 }
 
 export function usePagination<T = any>(options: PaginationOptions<T>) {
-  const {
-    enabled: cacheEnabled = true,
-    ttl: cacheTtl = 300,
-    key: customCacheKey = null,
-  } = options?.cache || {};
-
   const paginationOptions = ref<PaginationOptions<T>>({
     cb: async (query) => query,
-    store: null,
     auto: true,
     perPage: 25,
     searchWordLength: 0,
     ASC: null,
     sortBy: null,
     watch: [],
-    attrName: null,
     ...(options || {}),
   });
 
-  const response = ref<T[]>([]);
   const search = ref("");
   const auto = ref(paginationOptions.value.auto);
   const perPage = ref(paginationOptions.value.perPage ?? 25);
-  const searching = ref(false);
-
-  const req = useApiRequest();
+  const debouncedSearch = ref("");
 
   const pagination = useTablePagination(
     perPage.value,
@@ -96,286 +37,162 @@ export function usePagination<T = any>(options: PaginationOptions<T>) {
     paginationOptions.value.ASC,
   );
 
-  const originalPaginationState = ref({
-    page: 0,
-    totalPages: 0,
-    done: false,
+  const queryClient = useQueryClient();
+
+  // Debounce search
+  let searchTimeout: ReturnType<typeof setTimeout>;
+  watch(search, (val) => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      debouncedSearch.value = val;
+      // Reset page on search change
+      pagination.page.value = 0;
+      pagination.done.value = false;
+    }, 400);
   });
 
-  let toWatch: number;
-  watch(
-    () => paginationOptions.value.watch,
-    () => {
-      if (toWatch) clearTimeout(toWatch);
-      toWatch = setTimeout(() => {
-        send();
-      }, 400) as any;
-    },
-    { deep: true },
-  );
-
-  function switchToSearchMode() {
-    if (!searching.value) {
-      originalPaginationState.value = {
-        page: pagination.page.value,
-        totalPages: pagination.totalPages.value,
-        done: pagination.done.value,
-      };
-      searching.value = true;
-    }
-    pagination.reset(perPage.value);
-  }
-
-  function switchToNormalMode() {
-    if (searching.value) {
-      pagination.page.value = originalPaginationState.value.page;
-      pagination.totalPages.value = originalPaginationState.value.totalPages;
-      pagination.done.value = originalPaginationState.value.done;
-      searching.value = false;
-    }
-  }
-
-  function getPaginationData(next = true, current = false) {
-    return {
-      search: search.value || undefined,
-      page: next
-        ? !current
-          ? ++pagination.page.value
-          : pagination.page.value
-        : --pagination.page.value,
-      limit: pagination?.limit?.value || 25,
-      sortBy: pagination?.sortBy?.value || "id",
-      sortDirection: pagination?.ASC?.value ? "ASC" : "DESC",
-    };
-  }
-
-  function getGeneratedCacheKey(paginationData: any) {
-    const baseKey =
-      customCacheKey ??
-      (paginationOptions.value.cb
-        ? paginationOptions.value.cb.toString()
-        : "default");
+  // Build the query key reactively
+  const queryKey = computed(() => {
     const watchValues =
       paginationOptions.value.watch?.map((w) => unref(w)) || [];
-    return `${baseKey}:${JSON.stringify(paginationData)}:watch:${JSON.stringify(watchValues)}`;
-  }
+    return [
+      "pagination",
+      paginationOptions.value.cb?.toString().slice(0, 50) || "default",
+      pagination.page.value,
+      perPage.value,
+      debouncedSearch.value,
+      pagination.sortBy?.value,
+      pagination.ASC?.value,
+      ...watchValues,
+    ];
+  });
 
-  let fetchController: AbortController;
-  async function fetch(next = true, current = false) {
-    console.log("[usePagination] fetch called", { next, current });
-    if (next && pagination.done.value) return;
+  // The actual query
+  const {
+    data: queryData,
+    isPending: queryPending,
+    isFetching,
+    error: queryError,
+    refetch,
+  } = useQuery({
+    queryKey,
+    enabled: computed(() => auto.value !== false),
+    queryFn: async ({ signal }) => {
+      const paginationData = {
+        search: debouncedSearch.value || undefined,
+        page: pagination.page.value + 1, // API expects 1-based
+        limit: pagination?.limit?.value || 25,
+        sortBy: pagination?.sortBy?.value || "id",
+        sortDirection: pagination?.ASC?.value ? "ASC" : "DESC",
+      };
 
-    const paginationData = getPaginationData(next, current);
-    const cacheKey = getGeneratedCacheKey(paginationData);
-
-    if (cacheEnabled) {
-      const cachedData = getCache(cacheKey);
-      if (cachedData) {
-        console.log("[usePagination] cache hit for key:", cacheKey);
-        if (paginationOptions.value.store) {
-          paginationOptions.value.store.set(cachedData);
-        }
-        req.response.value = cachedData;
-        response.value = cachedData;
-        return;
+      if (paginationOptions.value.cb) {
+        return paginationOptions.value.cb(paginationData, { signal });
       }
-    }
+      return { success: true, data: [] };
+    },
+  });
 
-    response.value = [];
-    if (paginationOptions.value.store) {
-      paginationOptions.value.store.set([]);
-    }
+  // Derive response from query data
+  const response = computed<T[]>(() => {
+    if (!queryData.value) return [];
+    const res = queryData.value as any;
+    if (!res.success) return [];
 
-    if (fetchController) fetchController.abort();
-    fetchController = new AbortController();
+    const responseData =
+      res.data?.content || res.data?.response || res.data || [];
 
-    req.send(
-      () => {
-        if (paginationOptions.value.cb) {
-          return paginationOptions.value.cb(paginationData, {
-            signal: fetchController.signal,
-          });
+    return Array.isArray(responseData) ? responseData : [];
+  });
+
+  // Update totalPages from API response
+  watch(
+    queryData,
+    (data) => {
+      if (data) {
+        const res = data as any;
+        if (res?.data?.totalPages) {
+          pagination.totalPages.value = res.data.totalPages;
         }
-        return Promise.resolve({ success: true, data: [] });
-      },
-      (res) => {
-        if (res.success) {
-          const responseData =
-            res.data?.content ||
-            res.data?.response ||
-            (paginationOptions.value.attrName &&
-              res.data?.[paginationOptions.value.attrName]) ||
-            res.data ||
-            [];
-
-          response.value = Array.isArray(responseData) ? responseData : [];
-
-          if (paginationOptions.value.store?.set) {
-            paginationOptions.value.store.set(response.value);
-          }
-
-          if (cacheEnabled) {
-            setCache(cacheKey, response.value, cacheTtl);
-          }
-
-          pagination.totalPages.value = res.data?.totalPages || 1;
-
-          if (
-            response.value.length < pagination.limit.value &&
-            pagination.page.value >= pagination.totalPages.value
-          ) {
-            pagination.done.value = true;
-          }
-        }
-      },
-      true,
-    );
-  }
-
-  let searchTimeout: number = 0;
-  function fetchSearch(next = true, current = false) {
-    if (next && pagination.done.value) return;
-
-    if (fetchController) fetchController.abort();
-    if (searchTimeout) clearTimeout(searchTimeout);
-
-    fetchController = new AbortController();
-
-    const paginationData = getPaginationData(next, current);
-    const cacheKey = getGeneratedCacheKey(paginationData);
-
-    if (cacheEnabled) {
-      const cachedData = getCache(cacheKey);
-      if (cachedData?.length) {
-        if (paginationOptions.value.store?.set) {
-          paginationOptions.value.store.set(cachedData);
-        }
-        response.value = cachedData;
-        return;
-      }
-    }
-
-    // Clear store and fire request immediately (Search.vue already debounces)
-    if (paginationOptions.value.store?.set) {
-      paginationOptions.value.store.set([]);
-    }
-    req.send(
-      () => {
-        if (paginationOptions.value.cb) {
-          return paginationOptions.value.cb(paginationData, {
-            signal: fetchController.signal,
-          });
-        }
-        return Promise.resolve({ success: true, data: [] });
-      },
-      (res) => {
-        const responseData =
-          res.data?.content ||
-          res.data?.response ||
-          (paginationOptions.value.attrName &&
-            res.data?.[paginationOptions.value.attrName]) ||
-          res.data ||
-          [];
-
-        const finalData = Array.isArray(responseData) ? responseData : [];
-
-        if (res.success) {
-          response.value = finalData;
-          if (paginationOptions.value.store) {
-            paginationOptions.value.store.set(finalData);
-          }
-          if (cacheEnabled) {
-            setCache(cacheKey, finalData, cacheTtl);
-          }
-        } else {
-          response.value = [];
-        }
-
-        pagination.totalPages.value = res.data?.totalPages || 1;
+        // Check if we've reached the end
+        const items = response.value;
         if (
-          res?.success &&
-          finalData.length < pagination.limit.value &&
-          pagination.page.value >= pagination.totalPages.value
+          items.length < (pagination.limit?.value || 25) &&
+          pagination.page.value + 1 >= pagination.totalPages.value
         ) {
           pagination.done.value = true;
         }
+      }
+    },
+    { immediate: true },
+  );
+
+  // Watch external deps and refetch
+  if (paginationOptions.value.watch?.length) {
+    let watchTimeout: ReturnType<typeof setTimeout>;
+    watch(
+      () => paginationOptions.value.watch?.map((w) => unref(w)),
+      () => {
+        if (watchTimeout) clearTimeout(watchTimeout);
+        watchTimeout = setTimeout(() => {
+          pagination.page.value = 0;
+          pagination.done.value = false;
+        }, 400);
       },
-      true,
+      { deep: true },
     );
   }
 
+  const data = computed(() => response.value);
+
+  const pending = computed(() => isFetching.value);
+  const error = computed(() =>
+    queryError.value ? (queryError.value as Error).message : "",
+  );
+
   function next() {
-    if (searching.value) {
-      fetchSearch(true, false);
-    } else {
-      fetch(true, false);
+    if (
+      !pagination.done.value &&
+      pagination.page.value < pagination.totalPages.value
+    ) {
+      pagination.page.value++;
     }
   }
 
   function previous() {
-    if (searching.value && pagination.page.value <= 1) return;
-    if (!searching.value && pagination.page.value <= 1) return;
-
-    if (searching.value) {
-      fetchSearch(false);
+    if (pagination.page.value > 0) {
       pagination.done.value = false;
-    } else {
-      pagination.done.value = false;
-      fetch(false, false);
+      pagination.page.value--;
     }
   }
-
-  watch(search, () => {
-    pagination.done.value = false;
-    if (
-      search.value &&
-      search.value.length >= (paginationOptions.value.searchWordLength ?? 0)
-    ) {
-      switchToSearchMode();
-      fetchSearch(true, false);
-    } else if (!search.value) {
-      switchToNormalMode();
-      pagination.reset(perPage.value);
-      pagination.done.value = false;
-      auto.value = true;
-      fetch();
-    }
-  });
-
-  watch(
-    auto,
-    (newVal) => {
-      if (newVal) fetch();
-    },
-    {
-      immediate: paginationOptions.value.auto,
-    },
-  );
-
-  watch(perPage, () => {
-    pagination.reset(perPage.value);
-    if (search.value) {
-      switchToSearchMode();
-      fetchSearch(true, false);
-    } else {
-      switchToNormalMode();
-      fetch(true, false);
-    }
-  });
-
-  provide("next", next);
-  provide("previous", previous);
-  provide("page", pagination.page);
-  provide("totalPages", pagination.totalPages);
-  provide("searching", searching);
-  provide("perPage", perPage);
-
-  const page = computed(() => pagination.page.value);
 
   function send() {
     pagination.reset();
-    fetch();
+    // Invalidate all queries matching this pagination to force refetch
+    queryClient.invalidateQueries({ queryKey: ["pagination"] });
   }
+
+  // Provide for Table component compatibility
+  provide("next", next);
+  provide("previous", previous);
+  provide("setPage", pagination.setPage);
+  provide("page", pagination.page);
+  provide("totalPages", pagination.totalPages);
+  provide("perPage", perPage);
+  provide("sortBy", pagination.sortBy);
+  provide("ASC", pagination.ASC);
+  provide("updateSortBy", (val: string) => (pagination.sortBy.value = val));
+  provide("updateASC", (val?: boolean) => {
+    pagination.ASC.value = val !== undefined ? val : !pagination.ASC.value;
+  });
+  provide("updateLimit", (num: number) => {
+    perPage.value = Number(num);
+    pagination.limit.value = Number(num);
+    pagination.page.value = 0;
+    pagination.done.value = false;
+  });
+
+  const page = computed(() => pagination.page.value);
 
   return {
     page,
@@ -384,18 +201,15 @@ export function usePagination<T = any>(options: PaginationOptions<T>) {
     perPage,
     auto,
     totalPages: computed(() => pagination.totalPages.value),
-    data: computed<T[]>(() =>
-      paginationOptions.value.store && !searching.value
-        ? paginationOptions.value.store.getAll()
-        : (response.value as T[]),
-    ),
-    error: req.error,
-    pending: req.pending,
-    dirty: req.dirty,
+    data,
+    error,
+    pending,
+    dirty: computed(() => !!queryData.value),
     response,
     sortBy: pagination.sortBy,
     ASC: pagination.ASC,
     next,
     previous,
+    refetch,
   };
 }

@@ -28,12 +28,34 @@ const orderActions = [
   },
 ];
 
-const filters = ["Waiting", "Shipped", "Delivered", "Refunded", "All"];
-const activeFilter = ref("Waiting");
+const orderStatusFilters = [
+  "All",
+  "PENDING",
+  "PROCESSING",
+  "SHIPPED",
+  "DELIVERED",
+  "CANCELLED",
+  "REFUNDED",
+  "EXPIRED",
+];
+
+const paymentStatusFilters = ["All", "PENDING", "PAID", "FAILED", "REFUNDED"];
+
+const activeOrderStatus = ref("All");
+const activePaymentStatus = ref("All");
 
 const pagination = usePagination<Order>({
-  cb: (query: any) => getOrders({ ...query, status: activeFilter.value }),
-  watch: [activeFilter],
+  cb: (query: any) =>
+    getOrders({
+      ...query,
+      status:
+        activeOrderStatus.value === "All" ? undefined : activeOrderStatus.value,
+      paymentStatus:
+        activePaymentStatus.value === "All"
+          ? undefined
+          : activePaymentStatus.value,
+    }),
+  watch: [activeOrderStatus, activePaymentStatus],
 });
 
 const handleAction = (order: Order, actionText: string) => {
@@ -55,22 +77,56 @@ const handleAction = (order: Order, actionText: string) => {
   <Teleport to="#admin-actions" defer>
     <Button type="secondary"> New Orders </Button>
   </Teleport>
-  <div class="flex justify-between items-center">
-    <div class="flex gap-2.5">
-      <Button
-        :type="activeFilter == f ? 'secondary' : 'edge'"
-        v-for="f in filters"
-        :key="f"
-        @click="activeFilter = f"
-      >
-        {{ f }}
-      </Button>
+  <div class="flex flex-col md:flex-row items-start md:items-center gap-3">
+    <div class="flex gap-2 w-full md:w-auto">
+      <!-- Order Status dropdown -->
+      <div class="flex flex-col gap-1 flex-1 md:flex-initial">
+        <label
+          class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide"
+          >Order Status</label
+        >
+        <select
+          v-model="activeOrderStatus"
+          class="h-9 px-3 pr-8 rounded-lg border border-gray-300 bg-white text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10"
+        >
+          <option v-for="f in orderStatusFilters" :key="f" :value="f">
+            {{
+              f === "All"
+                ? "All Statuses"
+                : f.charAt(0) + f.slice(1).toLowerCase()
+            }}
+          </option>
+        </select>
+      </div>
+      <!-- Payment Status dropdown -->
+      <div class="flex flex-col gap-1 flex-1 md:flex-initial">
+        <label
+          class="text-[11px] font-semibold text-gray-400 uppercase tracking-wide"
+          >Payment</label
+        >
+        <select
+          v-model="activePaymentStatus"
+          class="h-9 px-3 pr-8 rounded-lg border border-gray-300 bg-white text-sm font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-black/10"
+        >
+          <option v-for="f in paymentStatusFilters" :key="f" :value="f">
+            {{
+              f === "All"
+                ? "All Payments"
+                : f.charAt(0) + f.slice(1).toLowerCase()
+            }}
+          </option>
+        </select>
+      </div>
     </div>
-    <Search v-model="pagination.search.value" />
+    <Search
+      v-model="pagination.search.value"
+      class="w-full md:w-auto md:ml-auto"
+    />
   </div>
   <Table
+    :pending="pagination.pending.value"
     @row="() => {}"
-    :rows="pagination.response.value || []"
+    :rows="pagination.data.value || []"
     :headers="{
       head: [
         'Order ID',

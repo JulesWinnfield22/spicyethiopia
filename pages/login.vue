@@ -6,7 +6,7 @@ import Form from "~/components/new_form_builder/Form.vue";
 import Input from "~/components/new_form_elements/Input.vue";
 import InputPassword from "~/components/new_form_elements/InputPassword.vue";
 import Button from "~/components/Button.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import { login } from "~/features/admin/api/authApi";
 import { toasted } from "~/utils/utils";
 import { useAuth } from "~/features/admin/store/authStore";
@@ -24,7 +24,7 @@ const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };
 
-const req = useApiRequest();
+const req = useApiMutation();
 const handleLogin = ({ values }: any) => {
   if (req.pending.value) return;
 

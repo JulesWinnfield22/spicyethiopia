@@ -20,9 +20,7 @@ const router = useRouter(); // Used for navigation in goToAddUser if needed
 const searchQuery = ref("");
 const activeFilter = ref("ACTIVE");
 
-const usersStore = useUsersStore();
 const pagination = usePagination({
-  store: usersStore,
   cb: (data: any) => getUsers({ status: activeFilter.value, ...data }),
   watch: [activeFilter],
 });
@@ -64,7 +62,7 @@ watch(activeFilter, () => {
       head: ['Name', 'Email', 'Role', 'Phone', 'Status', 'Actions'],
       row: ['fullName', 'email', 'roleName', 'phone_number', 'userStatus'],
     }"
-    :rows="usersStore.users || []"
+    :rows="pagination.data.value || []"
     :cells="{
       userStatus: UserStatusCell,
       fullName: (_: any, row: User) => `${row.firstName} ${row.fathersName}`,

@@ -25,7 +25,7 @@ const pagination = usePagination({
         head: ['Full Name', 'Email', 'Phone', 'Message', 'Actions'],
         row: ['fullName', 'email', 'phoneNumber', 'message'],
       }"
-      :rows="pagination.response.value || []"
+      :rows="pagination.data.value || []"
     >
       <template #message="{ value }">
         <p class="truncate max-w-[300px]">{{ value }}</p>

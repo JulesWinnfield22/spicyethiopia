@@ -11,14 +11,12 @@ import { useDiscountsStore } from "../store/discountsStore";
 import { ref, watch } from "vue";
 import SearchInput from "~/features/admin/components/SearchInput.vue";
 
-const discountsStore = useDiscountsStore();
 const searchQuery = ref("");
 const activeFilter = ref("ACTIVE");
 
 const DISCOUNT_STATUS = ["ACTIVE", "INACTIVE", "ALL"];
 
 const pagination = usePagination({
-  store: discountsStore,
   cb: (data: any) =>
     getAllDiscounts({
       status: activeFilter.value !== "ALL" ? activeFilter.value : undefined,
@@ -83,7 +81,7 @@ function calculateDuration(startDate: string, endDate: string) {
       head: ['Discount Percentage', 'Duration', 'Status', 'Actions'],
       row: ['discountPercentage', 'duration', 'status'],
     }"
-    :rows="discountsStore.discounts || []"
+    :rows="pagination.data.value || []"
     :cells="{
       discountPercentage: (value: number) => `${value}%`,
       duration: (_, row) => calculateDuration(row.startDate, row.endDate),

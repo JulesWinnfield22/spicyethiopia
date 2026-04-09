@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import FormModalParent from "~/components/FormModalParent.vue";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import Button from "~/components/Button.vue";
 import { removeProductDiscount } from "../../discount/api/discountApi";
 import { toasted } from "~/utils/utils";
@@ -17,7 +17,7 @@ const props = defineProps({
   },
 });
 
-const productReq = useApiRequest();
+const productReq = useApiMutation();
 const productsStore = useProductsStore();
 
 function removeDiscount() {

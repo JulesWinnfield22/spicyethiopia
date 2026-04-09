@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { useApiRequest, removeCache } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
+import { useQueryClient } from "@tanstack/vue-query";
 import { getImage } from "~/features/admin/api/staticApi";
 import { ref, type PropType, computed } from "vue";
 import InputParent from "./new_form_builder/InputParent.vue";
@@ -49,8 +50,9 @@ const edit = route.path.includes("admin");
 
 const image = ref<File | null>();
 const previewUrl = ref("");
-const contentReq = useApiRequest(true, "img_content_" + props.name);
-const imageReq = useApiRequest(false, "img_blob_data_" + props.name);
+const contentReq = useApiMutation();
+const imageReq = useApiMutation();
+const queryClient = useQueryClient();
 const fileError = ref<string | null>(null);
 
 if (props.name) {
@@ -68,15 +70,9 @@ if (props.name) {
               );
             }
           },
-          false,
-          false,
-          "img_blob_" + res.data.content,
         );
       }
     },
-    false,
-    false,
-    "img_content_" + props.name,
   );
 }
 
@@ -117,7 +113,7 @@ function selected(ev: Event) {
   }
 }
 
-const req = useApiRequest();
+const req = useApiMutation();
 function sendImage({ values }: any) {
   if (req.pending.value) return;
 
@@ -126,10 +122,7 @@ function sendImage({ values }: any) {
     () => setImage(props.name, fd),
     (res) => {
       if (res.success) {
-        removeCache("img_content_" + props.name);
-        if (contentReq.response.value?.content) {
-          removeCache("img_blob_" + contentReq.response.value.content);
-        }
+        queryClient.invalidateQueries({ queryKey: ["img_content", props.name] });
       }
       toasted(res.success, "Content updated", res.error);
     },

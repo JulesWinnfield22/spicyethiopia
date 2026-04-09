@@ -5,7 +5,7 @@ import Input from "~/components/new_form_elements/Input.vue";
 import Textarea from "~/components/new_form_elements/Textarea.vue";
 import Button from "~/components/Button.vue";
 import icons from "~/utils/icons";
-import { useApiRequest } from "~/composables/useApiRequest";
+import { useApiMutation } from "~/composables/useApiMutation";
 import AddressSearchInput from "~/components/new_form_elements/AddressSearchInput.vue";
 import { ref, watch } from "vue";
 import { useCartStore } from "~/stores/cartStore";
@@ -16,8 +16,8 @@ const props = defineProps({
     required: true,
   },
 });
-const req = useApiRequest();
-const orderReq = useApiRequest();
+const req = useApiMutation();
+const orderReq = useApiMutation();
 const cartStore = useCartStore();
 const search = ref(cartStore.info.shippingAddress?.streetAddress || "");
 
