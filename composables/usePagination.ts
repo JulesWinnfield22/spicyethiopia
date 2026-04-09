@@ -54,7 +54,9 @@ export function usePagination<T = any>(options: PaginationOptions<T>) {
   // Build the query key reactively
   const queryKey = computed(() => {
     const watchValues =
-      paginationOptions.value.watch?.map((w) => unref(w)) || [];
+      paginationOptions.value.watch?.map((w) =>
+        typeof w === "function" ? w() : unref(w),
+      ) || [];
     return [
       "pagination",
       paginationOptions.value.cb?.toString().slice(0, 50) || "default",
