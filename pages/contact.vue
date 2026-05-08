@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ title: "Contact Us" });
 useSeoMeta({
   title: "Contact Us | The Spicy Ethiopian",
   description:

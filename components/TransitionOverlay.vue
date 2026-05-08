@@ -62,10 +62,16 @@ const pageTitleChars = computed(() => {
   } else if (route.name === "spice-slug" && route.params.slug) {
     title = formatSlug(route.params.slug as string);
   } else {
-    title =
-      (route.meta.title as string)?.split("-")[0]?.trim() ||
-      (route.name as string) ||
-      "Spicy Ethiopia";
+    const metaTitle = (route.meta.title as string)?.split("-")[0]?.trim();
+    const routeName = route.name as string;
+
+    if (metaTitle) {
+      title = metaTitle;
+    } else if (routeName === "index") {
+      title = "Spicy Ethiopia";
+    } else {
+      title = routeName || "Spicy Ethiopia";
+    }
   }
 
   return title.split("").map((char, index) => ({

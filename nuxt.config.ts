@@ -10,7 +10,10 @@ export default defineNuxtConfig({
     },
   },
   modules: ["@pinia/nuxt", "@vite-pwa/nuxt"],
-  css: ["~/assets/main.css"],
+  css: [
+    "~/assets/main.css",
+    "@fortawesome/fontawesome-svg-core/styles.css",
+  ],
   plugins: [
     { src: "~/plugins/modalx-plugin", mode: "client" },
     "~/plugins/fontawesome.ts",

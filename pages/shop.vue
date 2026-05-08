@@ -1,4 +1,5 @@
 <script setup lang="ts" scoped>
+definePageMeta({ title: "Shop Spices" });
 useSeoMeta({
   title: "Shop Ethiopian Spices | The Spicy Ethiopian",
   description:

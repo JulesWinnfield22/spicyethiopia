@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ title: "Spicy Ethiopian" });
 useSeoMeta({
   title: "The Spicy Ethiopian | Authentic Ethiopian Spices",
   description:
@@ -216,7 +217,7 @@ onMounted(() => {
                 class="bg-black text-white font-sans px-8 py-4 cursor-pointer rounded-full font-semibold flex items-center gap-2 transition duration-300 hover:bg-gray-800 shadow-lg"
               >
                 Featured Spices
-                <span><i class="fa-solid fa-arrow-right"></i></span>
+                <span class="*:size-5" v-html="icons.rightArrow" />
               </button>
               <!-- <button
                 class="border-2 border-black text-black font-sans px-8 py-4 cursor-pointer rounded-full font-semibold flex items-center gap-2 transition duration-300 hover:bg-black hover:text-white"

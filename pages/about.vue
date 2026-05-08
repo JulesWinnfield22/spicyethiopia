@@ -6,6 +6,7 @@
 </template>
 
 <script setup>
+definePageMeta({ title: "About Us" });
 useSeoMeta({
   title: "About Us | The Spicy Ethiopian",
   description:
