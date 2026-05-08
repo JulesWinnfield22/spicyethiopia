@@ -37,6 +37,10 @@ useHead({
       name: "description",
       content: "Authentic Ethiopian Spices Delivered to Your Door",
     },
+    {
+      name: "google-site-verification",
+      content: "IJMGCzONhiinxhK4hWPNZEYO-s4mLuJiupYxsPJciCM",
+    },
   ],
   link: [{ rel: "icon", type: "image/png", href: "/spice-logo.png" }],
 });
