@@ -1,5 +1,12 @@
 <script setup lang="ts" scoped>
-definePageMeta({ title: "Shop Spices - Spicy Ethiopia" });
+useSeoMeta({
+  title: "Shop Ethiopian Spices | The Spicy Ethiopian",
+  description:
+    "Browse our collection of authentic Ethiopian spices. From Berbere to Mitmita, find premium organic spices sourced directly from Ethiopia and delivered to your door.",
+  ogTitle: "Shop Ethiopian Spices | The Spicy Ethiopian",
+  ogDescription:
+    "Browse our collection of authentic Ethiopian spices. Premium, organic selections delivered across Canada.",
+});
 import spiceOne from "~/assets/img/spiceOne.png";
 import spiceTwo from "~/assets/img/spiceTwo.png";
 import spiceThree from "~/assets/img/spiceThree.png";

@@ -3,6 +3,11 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
+useSeoMeta({
+  title: 'Page Not Found | The Spicy Ethiopian',
+  robots: 'noindex, nofollow',
+});
+
 const goHome = () => {
   router.push('/');
 };

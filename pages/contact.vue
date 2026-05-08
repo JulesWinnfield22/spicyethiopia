@@ -1,5 +1,12 @@
 <script setup lang="ts">
-definePageMeta({ title: "Contact Us - Spicy Ethiopia" });
+useSeoMeta({
+  title: "Contact Us | The Spicy Ethiopian",
+  description:
+    "Get in touch with The Spicy Ethiopian. Send us your questions, suggestions, or reviews. We value your feedback and are here to help.",
+  ogTitle: "Contact Us | The Spicy Ethiopian",
+  ogDescription:
+    "Have questions about our Ethiopian spices? Send us a message — we'd love to hear from you.",
+});
 import Button from "~/components/Button.vue";
 import Form from "~/components/new_form_builder/Form.vue";
 import { Input, Textarea } from "~/components/new_form_elements";

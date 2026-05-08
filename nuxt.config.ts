@@ -1,6 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   devtools: { enabled: true },
+  app: {
+    head: {
+      htmlAttrs: { lang: 'en' },
+      meta: [
+        { name: 'theme-color', content: '#7c2d12' },
+      ],
+    },
+  },
   modules: ["@pinia/nuxt", "@vite-pwa/nuxt"],
   css: ["~/assets/main.css"],
   plugins: [

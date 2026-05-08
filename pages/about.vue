@@ -6,7 +6,14 @@
 </template>
 
 <script setup>
-definePageMeta({ title: "About Us - Spicy Ethiopia" });
+useSeoMeta({
+  title: "About Us | The Spicy Ethiopian",
+  description:
+    "Learn about The Spicy Ethiopian — our mission to bring authentic, premium Ethiopian spices from the vibrant markets of Addis Ababa to your kitchen.",
+  ogTitle: "About Us | The Spicy Ethiopian",
+  ogDescription:
+    "Our mission is to bring authentic Ethiopian spices from Addis Ababa to your kitchen.",
+});
 import packageGroup from "~/assets/img/packageGroup.png";
 import gelila1 from "~/assets/img/gelila1.png";
 import gelila2 from "~/assets/img/gelila2.png";

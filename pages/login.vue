@@ -20,6 +20,11 @@ definePageMeta({
   layout: false,
 });
 
+useSeoMeta({
+  title: "Login | The Spicy Ethiopian",
+  robots: "noindex, nofollow",
+});
+
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
 };

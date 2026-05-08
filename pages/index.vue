@@ -1,5 +1,12 @@
 <script setup lang="ts">
-definePageMeta({ title: "Spicy Ethiopia - Home" });
+useSeoMeta({
+  title: "The Spicy Ethiopian | Authentic Ethiopian Spices",
+  description:
+    "Experience the true essence of Ethiopian cuisine. From the vibrant markets of Addis Ababa to your doorstep, we bring you the finest, most aromatic spices. Berbere, Mitmita, and more.",
+  ogTitle: "The Spicy Ethiopian | Authentic Ethiopian Spices",
+  ogDescription:
+    "Premium, organic Ethiopian spices sourced directly and delivered across Canada. Shop Berbere, Mitmita, and more.",
+});
 import { onMounted, ref, computed, inject, type ShallowRef } from "vue";
 import type Lenis from "lenis";
 import spices1 from "~/assets/img/spiceSpoonRight.png";

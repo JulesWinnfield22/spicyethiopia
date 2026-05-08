@@ -60,8 +60,8 @@ useSeoMeta({
       ? `${staticRoute}/${product.value.images[0]}`
       : undefined,
   twitterCard: "summary_large_image",
-  ogType: "website",
-  ogUrl: () => route.fullPath,
+  ogType: "product",
+  ogUrl: () => `https://store.spicyethiopian.com${route.fullPath}`,
 });
 
 // Custom product meta tags using useHead
@@ -92,6 +92,39 @@ useHead({
           : "",
     },
   ],
+  script: product.value
+    ? [
+        {
+          type: "application/ld+json",
+          innerHTML: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.value.title,
+            description: product.value.description,
+            image: product.value.images?.[0]
+              ? `${staticRoute}/${product.value.images[0]}`
+              : undefined,
+            url: `https://store.spicyethiopian.com/spice/${productSlug.value}`,
+            brand: {
+              "@type": "Brand",
+              name: "The Spicy Ethiopian",
+            },
+            offers: {
+              "@type": "Offer",
+              price: product.value.discountedPrice ?? product.value.price,
+              priceCurrency: "USD",
+              availability: "https://schema.org/InStock",
+              url: `https://store.spicyethiopian.com/spice/${productSlug.value}`,
+            },
+            weight: {
+              "@type": "QuantitativeValue",
+              value: product.value.weight,
+              unitText: product.value.weightUnit,
+            },
+          }),
+        },
+      ]
+    : [],
 });
 
 const isInstructionsActive = ref(false);

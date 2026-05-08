@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /login
+Disallow: /admin/
+Disallow: /cart/
+Disallow: /checkout
+Disallow: /payment
+Disallow: /shipping
 
-Sitemap: https://spicyethiopian.com/sitemap.xml
+Sitemap: https://store.spicyethiopian.com/sitemap.xml
