@@ -129,6 +129,31 @@ function submitProduct({ values }: { values: Product }) {
         validation="required|num"
       />
     </div>
+    <div class="col-span-2 grid grid-cols-1 md:grid-cols-2 gap-3 border rounded-md border-gray p-4">
+      <p class="col-span-1 md:col-span-2 border-b py-2 border-gray font-bold text-xl">
+        Inventory Configuration
+      </p>
+      <Select
+        name="inventoryHoldMinutes"
+        label="Hold reserved items for"
+        :obj="true"
+        :options="[
+          { label: '5 Minutes', value: 5 },
+          { label: '10 Minutes', value: 10 },
+          { label: '15 Minutes', value: 15 },
+          { label: '30 Minutes', value: 30 },
+          { label: '1 Hour', value: 60 },
+          { label: '2 Hours', value: 120 },
+          { label: '4 Hours', value: 240 },
+          { label: '8 Hours', value: 480 },
+          { label: '24 Hours', value: 1440 },
+        ]"
+        :value="product?.inventoryHoldMinutes || 30"
+        :attributes="{
+          placeholder: 'Select wait time',
+        }"
+      />
+    </div>
     <div class="col-span-2 flex justify-end">
       <Button
         fullwidth

@@ -23,6 +23,7 @@ const props = defineProps<{
 
 const container = ref<HTMLElement | null>(null);
 const wrapper = ref<HTMLElement | null>(null);
+const activeIndex = ref(0);
 
 let ctx: gsap.Context;
 const timeRemaining = ref<{ [key: string]: string }>({});
@@ -82,6 +83,11 @@ const initScroll = () => {
           end: () => `+=${getScrollDistance()}`,
           invalidateOnRefresh: true,
           anticipatePin: 1,
+          onUpdate: (self) => {
+            if (props.products.length > 1) {
+              activeIndex.value = Math.round(self.progress * (props.products.length - 1));
+            }
+          },
         },
       });
     });
@@ -142,18 +148,21 @@ onUnmounted(() => {
         </p>
 
         <div class="flex gap-2 mt-8">
-          <span
-            class="w-3 h-3 rounded-full bg-dark border border-dark cursor-pointer"
-          ></span>
-          <span
-            class="w-3 h-3 rounded-full bg-transparent border border-dark cursor-pointer"
-          ></span>
-          <span
-            class="w-3 h-3 rounded-full bg-transparent border border-dark cursor-pointer"
-          ></span>
-          <span
-            class="w-3 h-3 rounded-full bg-transparent border border-dark cursor-pointer"
-          ></span>
+          <template v-if="products.length > 0">
+            <span
+              v-for="(_, i) in products"
+              :key="i"
+              :class="i === activeIndex ? 'bg-dark' : 'bg-transparent'"
+              class="w-3 h-3 rounded-full border border-dark cursor-pointer transition-colors duration-300"
+            ></span>
+          </template>
+          <template v-else>
+            <span
+              v-for="i in 3"
+              :key="i"
+              class="w-3 h-3 rounded-full bg-gray-200 border border-gray-200"
+            ></span>
+          </template>
         </div>
       </div>
 
@@ -219,6 +228,33 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
+
+      <!-- Skeleton placeholders when no products -->
+      <template v-if="products.length === 0">
+        <div
+          v-for="i in 3"
+          :key="'skeleton-' + i"
+          class="panel flex-shrink-0 w-full md:w-[400px] lg:w-[400px] h-[50vh] lg:h-[60vh] mx-0 lg:mx-4 rounded-3xl overflow-hidden relative"
+        >
+          <div class="w-full h-full bg-gray-100 rounded-3xl relative">
+            <div class="absolute inset-x-0 bottom-0 h-36 bg-linear-to-t from-gray-200/80 to-transparent rounded-b-3xl" />
+            <div class="absolute bottom-6 left-6 right-6 flex flex-col gap-2">
+              <div class="h-2.5 bg-gray-200 rounded-full w-1/4"></div>
+              <div class="h-5 bg-gray-200 rounded-full w-2/3"></div>
+              <div class="h-4 bg-gray-200 rounded-full w-1/5"></div>
+            </div>
+          </div>
+          <!-- Expired overlay (only on first skeleton) -->
+          <div
+            v-if="i === 1"
+            class="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-3xl bg-white/70 backdrop-blur-sm"
+          >
+            <span class="text-3xl">🌶</span>
+            <p class="text-dark font-semibold text-lg font-serif text-center px-6">This month's offers have ended</p>
+            <p class="text-gray-400 text-sm text-center px-8">Check back soon for new deals</p>
+          </div>
+        </div>
+      </template>
 
       <!-- Padding right -->
       <div class="w-20 flex-shrink-0"></div>

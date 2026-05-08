@@ -5,8 +5,6 @@ import {
   onMounted,
   onUnmounted,
   ref,
-  shallowRef,
-  provide,
   inject,
   watch,
   type ShallowRef,
@@ -25,8 +23,6 @@ const route = useRoute();
 const cartStore = useCartStore();
 const { navigateWithTransition } = useTransitionHelper();
 
-const activeStyle = "font-weight: bold; text-decoration: underline;";
-const defaultStyle = "text-decoration: none;";
 
 const lenis = inject<ShallowRef<Lenis | null>>("lenis")!;
 

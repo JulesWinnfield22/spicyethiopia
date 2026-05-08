@@ -18,6 +18,7 @@ export interface Product {
   weightUnit: "g" | "kg" | "ml" | "l";
   quantity: number;
   status: string;
+  inventoryHoldMinutes?: number;
   createdAt?: Date;
   updatedAt?: Date;
 }

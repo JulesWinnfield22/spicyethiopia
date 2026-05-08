@@ -15,7 +15,6 @@ onMounted(() => {
 
 const contact = computed(() => response.value || null);
 
-// Map platform names to icon keys
 const platformIconMap: Record<string, string> = {
   Facebook: "fb",
   Instagram: "ig",
@@ -35,165 +34,19 @@ function getSocialIcon(platform: string) {
 </script>
 
 <template>
-  <footer class="bg-dark flex flex-col gap-6 text-white p-4 pt-12 lg:p-16">
-    <div class="border-b md:border-none border-gray/30 pb-6">
-      <img :src="logo" alt="Logo" class="w-12" />
-    </div>
+  <footer class="bg-dark text-white">
+    <!-- Main grid -->
     <div
-      class="grid grid-cols-3 md:grid-cols-4 gap-6 border-b border-gray/30 pb-6"
+      class="px-6 py-12 md:px-12 lg:px-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 border-b border-white/10"
     >
-      <div class="hidden md:flex flex-col gap-4">
-        <h3 class="text-sm md:text-xl font-bold">Contact</h3>
-        <ul class="flex flex-col gap-5 text-xs md:text-sm">
-          <li
-            v-for="phone in contact?.phone_number"
-            :key="phone"
-            class="flex items-center gap-6"
-          >
-            <span class="flex-1 flex items-center gap-2">
-              <i v-html="icons.support" />
-              {{ phone }}
-            </span>
-          </li>
-          <li v-if="contact?.email" class="flex items-center gap-6">
-            <span class="flex-1 flex items-center gap-2">
-              <i v-html="icons.mail" />
-              {{ contact.email }}
-            </span>
-          </li>
-          <li v-if="contact?.location" class="flex items-center gap-6">
-            <span class="flex-1 flex items-center gap-2">
-              <i v-html="icons.location" />
-              {{ contact.location }}
-            </span>
-          </li>
-        </ul>
-      </div>
-      <div class="flex flex-col gap-4">
-        <h3 class="text-sm md:text-xl font-bold">About Us</h3>
-        <ul class="flex flex-col gap-2 text-xs md:text-sm">
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Services</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >FAQ</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Support</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Blog</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Events</a
-            >
-          </li>
-        </ul>
-      </div>
-      <div class="flex flex-col gap-4">
-        <h3 class="text-sm md:text-xl font-bold">Terms</h3>
-        <ul class="flex flex-col gap-2 text-xs md:text-sm">
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Privacy</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Careers</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Investors</a
-            >
-          </li>
-        </ul>
-      </div>
-      <div class="flex flex-col gap-4">
-        <h3 class="text-sm md:text-xl font-bold">Partners</h3>
-        <ul class="flex flex-col gap-2 text-xs md:text-sm">
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Support Center</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Knowledge Base</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Community</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Affiliates</a
-            >
-          </li>
-          <li>
-            <a
-              href="#"
-              @click.prevent="navigateWithTransition('/')"
-              class="hover:underline"
-              >Become a Partner</a
-            >
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div
-      class="flex flex-col gap-4 md:flex-row items-center md:justify-between"
-    >
-      <div class="flex justify-center gap-6 items-center p-4">
-        <template v-if="contact?.social_media?.length">
+      <!-- Brand -->
+      <div class="sm:col-span-2 lg:col-span-1 flex flex-col gap-4">
+        <img :src="logo" alt="Logo" class="w-10" />
+        <p class="text-sm text-gray-400 leading-relaxed max-w-xs">
+          Authentic Ethiopian spices and blends, brought straight to your
+          kitchen.
+        </p>
+        <div v-if="contact?.social_media?.length" class="flex gap-4 mt-1">
           <a
             v-for="social in contact.social_media"
             :key="social.platform"
@@ -204,30 +57,115 @@ function getSocialIcon(platform: string) {
           >
             <i v-html="getSocialIcon(social.platform)" />
           </a>
-        </template>
-      </div>
-      <span class="truncate"
-        >&copy; {{ new Date().getFullYear() }} All rights reserved.</span
-      >
-      <div class="text-sm grid gap-6 place-items-center">
-        <div
-          class="text-gray flex gap-4 justify-center flex-wrap *:underline underline-offset-4 font-light"
-        >
-          <a href="#" @click.prevent="navigateWithTransition('/')"
-            >Privacy Policy</a
-          >
-          <a href="#" @click.prevent="navigateWithTransition('/')"
-            >Terms of Service</a
-          >
-          <a href="#" @click.prevent="navigateWithTransition('/')"
-            >Cookies Settings</a
-          >
         </div>
+      </div>
+
+      <!-- Explore -->
+      <div class="flex flex-col gap-4">
+        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500">
+          Explore
+        </h3>
+        <ul class="flex flex-col gap-2.5 text-sm">
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/')"
+              class="text-gray-300 hover:text-white transition-colors"
+              >Home</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/shop')"
+              class="text-gray-300 hover:text-white transition-colors"
+              >Shop</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/about')"
+              class="text-gray-300 hover:text-white transition-colors"
+              >About Us</a
+            >
+          </li>
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/contact')"
+              class="text-gray-300 hover:text-white transition-colors"
+              >Contact</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Order -->
+      <div class="flex flex-col gap-4">
+        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500">
+          Order
+        </h3>
+        <ul class="flex flex-col gap-2.5 text-sm">
+          <li>
+            <a
+              href="#"
+              @click.prevent="navigateWithTransition('/cart')"
+              class="text-gray-300 hover:text-white transition-colors"
+              >Cart</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div class="flex flex-col gap-4">
+        <h3 class="text-xs font-semibold uppercase tracking-widest text-gray-500">
+          Get in Touch
+        </h3>
+        <ul class="flex flex-col gap-3 text-sm text-gray-300">
+          <li
+            v-for="phone in contact?.phone_number"
+            :key="phone"
+            class="flex items-center gap-2"
+          >
+            <i v-html="icons.support" class="shrink-0 opacity-50" />
+            {{ phone }}
+          </li>
+          <li v-if="contact?.email" class="flex items-center gap-2">
+            <i v-html="icons.mail" class="shrink-0 opacity-50" />
+            {{ contact.email }}
+          </li>
+          <li v-if="contact?.location" class="flex items-start gap-2">
+            <i v-html="icons.location" class="shrink-0 opacity-50 mt-0.5" />
+            {{ contact.location }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bottom bar -->
+    <div
+      class="px-6 md:px-12 lg:px-16 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-gray-500"
+    >
+      <span
+        >&copy; {{ new Date().getFullYear() }} The Spicy Ethiopian. All rights
+        reserved.</span
+      >
+      <div class="flex gap-5">
+        <a
+          href="#"
+          @click.prevent="navigateWithTransition('/shipping')"
+          class="hover:text-white transition-colors"
+          >Shipping Policy</a
+        >
+        <a
+          href="#"
+          @click.prevent="navigateWithTransition('/contact')"
+          class="hover:text-white transition-colors"
+          >Contact Us</a
+        >
       </div>
     </div>
   </footer>
 </template>
-
-<style scoped>
-/* Add any additional styles here */
-</style>

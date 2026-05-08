@@ -96,6 +96,21 @@ useHead({
 
 const isInstructionsActive = ref(false);
 const isMounted = ref(false);
+const selectedImageIndex = ref(0);
+
+watch(productSlug, () => {
+  selectedImageIndex.value = 0;
+});
+
+// Normalise images — API returns strings, admin form uses { name, file } objects
+const productImages = computed<string[]>(() => {
+  const imgs = product.value?.images;
+  if (!imgs?.length) return [];
+  return imgs.map((img) => {
+    if (typeof img === "string") return img;
+    return (img as any).name ?? "";
+  }).filter(Boolean);
+});
 
 onMounted(() => {
   isMounted.value = true;
@@ -143,13 +158,27 @@ watch(
       v-if="product"
       class="flex flex-col items-center md:items-start md:flex-row gap-6 md:gap-12"
     >
-      <img
-        :src="
-          !product?.images?.[0] ? '/' : `${staticRoute}/${product?.images[0]}`
-        "
-        class="bg-gray w-[573px] aspect-square max-h-[480px] md:h-auto md:rounded-xl rounded-md appearance-none object-cover max-w-full shadow-2xl"
-        :data-flip-id="'product-img-' + product.id"
-      />
+      <div class="flex flex-col gap-3 w-full md:w-auto md:shrink-0">
+        <img
+          :src="productImages[selectedImageIndex] ? `${staticRoute}/${productImages[selectedImageIndex]}` : '/'"
+          class="w-full md:w-[500px] aspect-square rounded-2xl object-cover shadow-2xl"
+          :data-flip-id="'product-img-' + product.id"
+        />
+        <div
+          v-if="productImages.length > 1"
+          class="flex gap-2 overflow-x-auto px-1 py-2"
+        >
+          <button
+            v-for="(img, idx) in productImages"
+            :key="idx"
+            @click="selectedImageIndex = idx"
+            :class="selectedImageIndex === idx ? 'ring-2 ring-offset-1 ring-dark opacity-100' : 'opacity-50 hover:opacity-100'"
+            class="shrink-0 w-16 h-16 rounded-xl overflow-hidden transition-all duration-200"
+          >
+            <img :src="`${staticRoute}/${img}`" class="w-full h-full object-cover" />
+          </button>
+        </div>
+      </div>
       <div class="md:w-1/2 max-w-[70ch] md:mx-auto flex flex-col gap-4">
         <div class="font-dm-serif flex flex-col gap-4">
           <div class="flex items-center font-semibold justify-between">

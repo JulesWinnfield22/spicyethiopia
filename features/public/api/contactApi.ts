@@ -6,7 +6,7 @@ export function getContactInfo() {
 }
 
 export function sendMessage(data: {
-  fullname: string;
+  fullName: string;
   email: string;
   phoneNumber: string;
   message: string;

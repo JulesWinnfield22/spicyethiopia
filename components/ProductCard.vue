@@ -25,7 +25,7 @@ const handleNavigate = (id: string) => {
 
 <template>
   <div
-    class="group relative bg-white rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1.5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.13)]"
+    class="group relative bg-white rounded-2xl flex flex-col transition-all duration-300 hover:-translate-y-1.5 shadow-[0_2px_12px_rgba(0,0,0,0.06)] hover:shadow-[0_12px_32px_rgba(0,0,0,0.13)]"
   >
     <!-- Mobile cart toggle -->
     <button
@@ -48,20 +48,13 @@ const handleNavigate = (id: string) => {
       <i v-html="icons.cart" class="*:size-4" />
     </button>
 
-    <!-- Sale badge -->
-    <div v-if="spice.discountedPrice > 0" class="absolute top-3 left-3 z-10">
-      <span class="sale-badge bg-primary text-white text-[9px] font-bold tracking-widest px-2.5 py-1 rounded-full uppercase">
-        Sale
-      </span>
-    </div>
-
     <!-- Image area -->
     <div
       @click.prevent="
         handleNavigate(spice.id);
         navigateWithTransition(`/spice/${slugify(spice.title)}`, spice.title);
       "
-      class="relative cursor-pointer overflow-hidden"
+      class="relative cursor-pointer overflow-hidden rounded-t-2xl"
     >
       <img
         v-if="spice.images?.[0]"
@@ -88,7 +81,7 @@ const handleNavigate = (id: string) => {
       class="flex-1 cursor-pointer px-4 pt-3 pb-1"
     >
       <div class="flex items-center gap-1.5 mb-1">
-        <span class="flame-icon text-xs select-none">🌶</span>
+        <span class="flame-icon text-xs select-none" style="filter: hue-rotate(220deg) saturate(3) brightness(0.9)">🌶</span>
         <span class="text-[10px] uppercase tracking-widest text-gray-400 font-medium">Spice</span>
       </div>
       <h3
@@ -182,19 +175,10 @@ const handleNavigate = (id: string) => {
   75% { transform: scaleY(1.06) rotate(-2deg); }
 }
 
-@keyframes badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 0, 0, 0.35); }
-  60% { box-shadow: 0 0 0 5px rgba(255, 0, 0, 0); }
-}
-
 .flame-icon {
   animation: flame-flicker 2.8s ease-in-out infinite;
   display: inline-block;
   transform-origin: bottom center;
-}
-
-.sale-badge {
-  animation: badge-pulse 2.4s ease-out infinite;
 }
 
 .add-cart-btn:hover .cart-icon {

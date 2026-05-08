@@ -7,8 +7,9 @@ import { useCartStore } from "~/stores/cartStore";
 import icons from "~/utils/icons";
 import { staticRoute } from "~/utils/utils";
 import { useRoute } from "vue-router";
-import { computed, onMounted, ref, shallowRef, watchEffect } from "vue";
+import { computed, onMounted, ref, shallowRef, watchEffect, onUnmounted } from "vue";
 import { useTransitionHelper } from "~/composables/useTransition";
+import { addToast, removeToast } from "~/toast/index";
 
 definePageMeta({
   title: "Cart",
@@ -21,6 +22,29 @@ const cartStore = useCartStore();
 
 const isSuccess = computed(() => route.params.type === "success");
 const isCancel = computed(() => route.params.type === "cancel");
+
+let pendingToastId: string | undefined = undefined;
+
+onMounted(() => {
+  if (process.client && !isSuccess.value && !isCancel.value) {
+    const pendingOrder = localStorage.getItem("pending_order_id");
+    if (pendingOrder) {
+      pendingToastId = `pending-order-${Date.now()}`;
+      addToast({
+        id: pendingToastId,
+        message: "You have a pending order. Complete your payment to avoid losing your reserved items!",
+        type: "warning",
+        duration: 9999999
+      });
+    }
+  }
+});
+
+onUnmounted(() => {
+  if (pendingToastId) {
+    removeToast(pendingToastId);
+  }
+});
 
 watchEffect(() => {
   if (process.client && isSuccess.value) {
